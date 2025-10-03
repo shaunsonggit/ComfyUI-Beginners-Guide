@@ -1,0 +1,281 @@
+﻿{
+  "last_node_id": 8,
+  "last_link_id": 11,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [20, 20],
+      "size": [240, 160],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [1]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [2, 3]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [10]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "基础模型"
+      },
+      "widgets_values": [
+        "sd_xl_base_1.0.safetensors",
+        "CLIP",
+        "VAE"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "LoraLoader",
+      "pos": [300, 40],
+      "size": [260, 200],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [4]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [5, 6]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoRA 微调"
+      },
+      "widgets_values": [
+        "fashion_pose.safetensors",
+        0.7,
+        0.7
+      ]
+    },
+    {
+      "id": 3,
+      "type": "CLIPTextEncode",
+      "pos": [600, -40],
+      "size": [320, 220],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [7]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "提示词"
+      },
+      "widgets_values": [
+        "fashion editorial portrait, cinematic lighting, silver accessories"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "CLIPTextEncode",
+      "pos": [600, 200],
+      "size": [320, 220],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [8]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "反向提示"
+      },
+      "widgets_values": [
+        "low quality, artifacts, oversaturated"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage",
+      "pos": [580, 440],
+      "size": [260, 200],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [9]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "基础画布"
+      },
+      "widgets_values": [896, 1152, 1]
+    },
+    {
+      "id": 6,
+      "type": "KSampler",
+      "pos": [940, 140],
+      "size": [360, 400],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 4
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 8
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [11]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "主要采样"
+      },
+      "widgets_values": [
+        445812336,
+        "fixed",
+        25,
+        9,
+        "dpmpp_2m",
+        "karras",
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 7,
+      "type": "VAEDecode",
+      "pos": [1340, 260],
+      "size": [260, 220],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 11
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [12]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "输出成品"
+      }
+    },
+    {
+      "id": 8,
+      "type": "SaveImage",
+      "pos": [1640, 280],
+      "size": [240, 200],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 12
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "导出设置"
+      },
+      "widgets_values": ["ReusableWorkflow"]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 2, 0, "MODEL"],
+    [2, 1, 1, 2, 1, "CLIP"],
+    [3, 1, 1, 3, 0, "CLIP"],
+    [4, 2, 0, 6, 0, "MODEL"],
+    [5, 2, 1, 3, 0, "CLIP"],
+    [6, 2, 1, 4, 0, "CLIP"],
+    [7, 3, 0, 6, 1, "CONDITIONING"],
+    [8, 4, 0, 6, 2, "CONDITIONING"],
+    [9, 5, 0, 6, 3, "LATENT"],
+    [10, 1, 2, 7, 1, "VAE"],
+    [11, 6, 0, 7, 0, "LATENT"],
+    [12, 7, 0, 8, 0, "IMAGE"]
+  ],
+  "groups": [],
+  "config": {}
+}

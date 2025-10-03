@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="zh-CN" class="scroll-smooth"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>核心概念速览：用积木理解 ComfyUI | ComfyUI 核心工作流上手教程</title><meta name="description" content="把节点、工作流、Checkpoint、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。"><script>
+      (function () {
+        const storageKey = "comfyui-guide-theme";
+        const root = document.documentElement;
+        const saved = localStorage.getItem(storageKey);
+        const systemPrefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const mode = saved || (systemPrefersDark ? "dark" : "light");
+        root.classList.remove("light", "dark");
+        root.classList.add(mode);
+        root.style.colorScheme = mode;
+      })();
+    </script><link rel="stylesheet" href="/_astro/index.DBJMAbaD.css"></head> <body class="min-h-screen bg-surface-light transition-colors dark:bg-surface-dark"> <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-primary">跳至正文</a> <header class="sticky top-0 z-40 border-b border-slate-200 bg-surface-light/95 backdrop-blur dark:border-slate-700 dark:bg-surface-dark/90"> <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4"> <a href="/" class="text-lg font-semibold text-primary">ComfyUI 核心工作流上手教程</a> <nav class="flex items-center gap-4 text-sm font-medium"> <ul class="hidden items-center gap-4 sm:flex"> <li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/#concepts"> 核心概念 </a> </li><li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/#text-to-image"> 文生图实战 </a> </li><li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/#workflow-reuse"> 工作流复用 </a> </li><li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/#downloads"> 资源下载 </a> </li> </ul> <button id="theme-toggle" type="button" class="flex items-center gap-2 rounded-full border border-slate-300 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/60 dark:border-slate-600 dark:bg-slate-800/70 dark:text-slate-200" aria-label="切换亮暗主题"> <span aria-hidden="true" class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-primary/20"> <svg class="h-4 w-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m5.196 1.804-1.414 1.414M21 12h-2m-1.804 5.196-1.414-1.414M12 21v-2m-5.196-1.804 1.414-1.414M3 12h2m1.804-5.196 1.414 1.414M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path> </svg> </span> <span class="hidden sm:inline">切换主题</span> </button> <script>
+  (function () {
+    const storageKey = "comfyui-guide-theme";
+    const preferDark = () => window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const root = document.documentElement;
+    const toggle = document.getElementById("theme-toggle");
+
+    const setMode = (mode) => {
+      if (mode === "dark") {
+        root.classList.add("dark");
+        root.classList.remove("light");
+      } else {
+        root.classList.remove("dark");
+        root.classList.add("light");
+      }
+      root.style.colorScheme = mode;
+      localStorage.setItem(storageKey, mode);
+    };
+
+    const init = () => {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        setMode(saved);
+      } else {
+        setMode(preferDark() ? "dark" : "light");
+      }
+    };
+
+    init();
+
+    toggle?.addEventListener("click", () => {
+      const nextMode = root.classList.contains("dark") ? "light" : "dark";
+      setMode(nextMode);
+    });
+
+    if (window.matchMedia) {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = (event) => {
+        if (!localStorage.getItem(storageKey)) {
+          setMode(event.matches ? "dark" : "light");
+        }
+      };
+      mediaQuery.addEventListener("change", handleChange);
+    }
+  })();
+</script> <details data-mobile-nav class="relative sm:hidden"> <summary class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-slate-300 text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-600 dark:text-slate-200"> <span class="sr-only">展开导航菜单</span> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"> <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5M3.75 12h16.5m-16.5 6.75h16.5"></path> </svg> </summary> <ul class="absolute right-0 top-11 w-48 space-y-1 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700 shadow-lg dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"> <li> <a class="block rounded-lg px-3 py-2 hover:bg-primary/10 hover:text-primary" href="/#concepts">核心概念</a> </li><li> <a class="block rounded-lg px-3 py-2 hover:bg-primary/10 hover:text-primary" href="/#text-to-image">文生图实战</a> </li><li> <a class="block rounded-lg px-3 py-2 hover:bg-primary/10 hover:text-primary" href="/#workflow-reuse">工作流复用</a> </li><li> <a class="block rounded-lg px-3 py-2 hover:bg-primary/10 hover:text-primary" href="/#downloads">资源下载</a> </li> </ul> </details> <script>
+    const mobileNav = document.querySelector("details[data-mobile-nav]");
+    mobileNav?.querySelectorAll("a").forEach((anchor) =>
+      anchor.addEventListener("click", () => mobileNav.removeAttribute("open"))
+    );
+  </script> </nav> </div> </header> <main id="main" class="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-12">  <article class="prose prose-lg mx-auto max-w-3xl"> <header class="mb-8 space-y-3 text-center"> <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">ComfyUI 核心教程</p> <h1 class="text-4xl font-bold">核心概念速览：用积木理解 ComfyUI</h1> <p class="text-slate-600 dark:text-slate-300">把节点、工作流、Checkpoint、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。</p> <img src="/assets/images/core-concepts-map.svg" alt="核心概念速览：用积木理解 ComfyUI 章节示意图" class="mx-auto rounded-xl shadow-lg" loading="lazy"> </header> <h2 id="为什么要先懂积木原理">为什么要先懂“积木原理”？</h2>
+<p>ComfyUI 的界面一开始可能让人望而生畏，其实它的运作逻辑和小时候拼积木一样：每一个方块负责一种明确的能力，再通过线缆把“输出”接到“输入”，组合出完整流程。抓住这个比喻，新手就能快速分辨——在一条文生图链路里，每个节点究竟负责什么。</p>
+<figure class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"> <img src="/assets/images/core-concepts-map.svg" alt="ComfyUI 核心概念导图" loading="lazy" class="w-full object-cover"> <div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:8%;top:14%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 1 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">节点</p> <p class="mt-1 leading-tight">负责单一动作，例如“加载模型”“写提示词”。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:38%;top:14%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 2 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">工作流</p> <p class="mt-1 leading-tight">把节点用连线排成顺序，形成可执行流程。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:68%;top:14%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 3 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">Checkpoint</p> <p class="mt-1 leading-tight">一整套大模型，决定画面的基础风格。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:22%;top:46%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 4 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">LoRA</p> <p class="mt-1 leading-tight">像贴花的滤镜，微调细节或人物。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:52%;top:46%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 5 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">VAE</p> <p class="mt-1 leading-tight">把潜空间图像翻译成可见色彩。</p> </div> </div> <figcaption class="border-t border-slate-200 bg-muted-light px-4 py-3 text-sm text-slate-600 dark:border-slate-700 dark:bg-muted-dark dark:text-slate-300">5 个核心模块用一条流程串起来，便于记忆</figcaption> </figure>
+<h3 id="5-条一句话心法">5 条一句话心法</h3>
+<ul>
+<li><strong>节点 (Node)</strong> = 功能积木：每个节点只做一件事，但一定有输入/输出接口。</li>
+<li><strong>工作流 (Workflow)</strong> = 积木搭建图：节点的连接顺序就是算法执行顺序。</li>
+<li><strong>Checkpoint</strong> = 画风模型：决定生成作品的大方向，相当于“模型底座”。</li>
+<li><strong>LoRA</strong> = 细节风格微调：覆盖在 Checkpoint 之上的“附加插件”。</li>
+<li><strong>VAE</strong> = 色彩滤镜：把潜空间数据翻译为真实像素，同时影响色调和对比度。</li>
+</ul>
+<div class="rounded-xl border border-primary/40 bg-primary/5 text-primary px-5 py-4 text-sm shadow-sm" role="note"> <p class="text-sm font-semibold"> 判断接口是否能连接 </p> <div class="mt-2 space-y-3 text-slate-600 dark:text-slate-300"> <p>把接口理解成“插头”和“插座”。输出端口旁边的标签（例如 <code>MODEL</code>、<code>CONDITIONING</code>）必须和目标输入端口的类型一致，连线时 ComfyUI 会自动高亮兼容的插座。</p> </div> </div>
+<h3 id="节点的-3-种常见输出">节点的 3 种常见输出</h3>
+<ol>
+<li><strong>数据载体</strong>：如 <code>CONDITIONING</code>、<code>LATENT</code>、<code>IMAGE</code>，代表生成过程中的不同阶段。</li>
+<li><strong>控制信号</strong>：如 <code>MODEL</code>、<code>VAE</code>，告知下游节点应该用哪套权重或解码方式。</li>
+<li><strong>执行触发</strong>：例如 <code>SaveImage</code> 没有输出，但它的执行会把全流程写入磁盘。</li>
+</ol>
+<h3 id="工作流链接的两条底层规则">工作流链接的两条底层规则</h3>
+<ul>
+<li><strong>数据必须是闭环</strong>：从 <code>Checkpoint Loader</code> 出来的 <code>MODEL</code> 与 <code>CLIP</code>，需要同时喂给 <code>KSampler</code> 才能完成采样。</li>
+<li><strong>视觉结果一定经过 VAE</strong>：无论是文生图还是图生图，只要最终需要 RGB 图片，就要把潜空间样本送入 <code>VAEDecode</code>。</li>
+</ul>
+<div class="rounded-xl border border-amber-400/60 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200 px-5 py-4 text-sm shadow-sm" role="note"> <p class="text-sm font-semibold"> 最容易忽略的节点顺序 </p> <div class="mt-2 space-y-3 text-slate-600 dark:text-slate-300"> <p><code>Empty Latent Image → KSampler → VAE Decode → Save Image</code> 是基础流程的“尾段必修课”。丢了其中任何一个节点，执行时就会出现“missing input” 错误。</p> </div> </div>
+<h3 id="如何判断工作流是否可复用">如何判断工作流是否可复用？</h3>
+<ul>
+<li><strong>节点标签是否通用</strong>：只要使用官方原生节点（没有自定义脚本），基本可以跨电脑运行。</li>
+<li><strong>模型路径是否存在</strong>：如果加载的 Checkpoint、LoRA 在本地目录不存在，需要手动改成自己的文件名。</li>
+<li><strong>参数是否独立存储</strong>：像采样步数、CFG Scale 这类数字都写在 <code>KSampler</code> 内部，更换模型后也记得检查它们是否合理。</li>
+</ul>
+<p>掌握这些概念之后，再看别人分享的工作流图，会像读流程图一样清晰，自然能快速定位“我要改的是哪个节点”。</p> <footer class="mt-12 rounded-xl border border-primary/30 bg-primary/5 p-6 text-sm shadow-sm dark:border-primary/40 dark:bg-primary/10"> <p class="font-semibold text-primary">配套资源</p> <ul class="mt-3 space-y-2"> <li><a class="text-primary hover:underline" href="/assets/workflows/text-to-image-basic.json" download>基础文生图工作流</a></li> <li><a class="text-primary hover:underline" href="/assets/workflows/workflow-reuse-template.json" download>工作流复用模板</a></li> </ul> </footer> </article>  </main> <footer class="border-t border-slate-200 bg-muted-light py-8 text-sm text-slate-500 dark:border-slate-700 dark:bg-muted-dark dark:text-slate-400"> <div class="mx-auto flex max-w-5xl flex-col gap-2 px-4 sm:flex-row sm:items-center sm:justify-between"> <p>&copy; 2025 ComfyUI 核心工作流上手教程</p> <p><a href="https://github.com/" rel="noreferrer">在 GitHub 上参与改进</a></p> </div> </footer> </body></html>

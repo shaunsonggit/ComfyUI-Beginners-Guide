@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960" height="520" viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 2; rx: 18; ry: 18; }
+      .title { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 22px; fill: #f8fafc; font-weight: 600; }
+      .step { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 16px; fill: #cbd5f5; }
+    </style>
+  </defs>
+  <rect width="960" height="520" fill="#0f172a" rx="24" />
+  <rect x="80" y="80" width="220" height="360" class="panel" />
+  <text x="110" y="130" class="title">准备节点</text>
+  <text x="110" y="170" class="step">• Prompt 节点</text>
+  <text x="110" y="210" class="step">• Negative Prompt</text>
+  <text x="110" y="250" class="step">• Checkpoint Loader</text>
+  <rect x="370" y="80" width="220" height="360" class="panel" />
+  <text x="400" y="130" class="title">生成阶段</text>
+  <text x="400" y="170" class="step">• KSampler</text>
+  <text x="400" y="210" class="step">• Empty Latent Image</text>
+  <text x="400" y="250" class="step">• CLIP Text Encode</text>
+  <rect x="660" y="80" width="220" height="360" class="panel" />
+  <text x="690" y="130" class="title">输出阶段</text>
+  <text x="690" y="170" class="step">• VAE Decode</text>
+  <text x="690" y="210" class="step">• Save Image</text>
+  <polyline points="300,260 370,260" stroke="#38bdf8" stroke-width="6" stroke-dasharray="16 10" fill="none" />
+  <polyline points="590,260 660,260" stroke="#38bdf8" stroke-width="6" stroke-dasharray="16 10" fill="none" />
+</svg>

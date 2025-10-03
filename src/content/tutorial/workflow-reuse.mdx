@@ -1,0 +1,99 @@
+﻿---
+title: 工作流复用：加载社区文件并改成自己的常用模板
+description: 学会导入 JSON / PNG 工作流、替换模型与提示词，以及保存为个人模板。
+order: 3
+heroImage: /assets/images/workflow-outline.svg
+gifDemo: /assets/images/workflow-reuse-demo.gif
+keywords:
+  - 工作流复用
+  - 模型切换
+  - LoRA 管理
+  - 提示词优化
+  - 模板沉淀
+goal: 5 分钟读懂一条陌生工作流，并快速换成自己的模型与提示词
+duration: 25 分钟
+difficulty: 进阶
+prerequisites:
+  - 已能独立跑通基础文生图工作流
+  - 理解节点类型与基本连线规则
+deliverables:
+  - 一份定制后的工作流 JSON 模板
+  - 带工作流元数据的 PNG 成品
+pitfalls:
+  - 忽视模型路径，导致“Model not found”错误
+  - 不检查 LoRA 强度，图像风格失控
+  - 直接覆盖原作者提示词，失去复现渠道
+---
+
+import GifDemo from "../../components/mdx/GifDemo.astro";
+import StepCard from "../../components/mdx/StepCard.astro";
+import TipCard from "../../components/mdx/TipCard.astro";
+
+## 章节导言
+
+社区分享的 JSON/PNG 是最高效的学习资料，但想真正变成自己的生产力，需要三步：读懂 → 换掉 → 保存。本章把这些动作拆成可执行的流程，帮你从“复制粘贴”进阶到“吸收整合”。
+
+<GifDemo
+  src="/assets/images/workflow-reuse-demo.gif"
+  alt="工作流复用操作演示"
+  caption="导入 → 替换模型 → 更新提示词 → 保存模板"
+  description="动图突出三个关键动作：确认依赖、调整核心节点、输出可复用模板。"
+/>
+
+## 阶段一：导入并建立上下文
+
+<StepCard index={1} title="导入 JSON / PNG" summary="拖放到画布" id="reuse-1">
+  <ol>
+    <li>下载资源区的 <code>workflow-reuse-template.json</code> 或拖入任何社区 PNG。</li>
+    <li>按 <kbd>Ctrl</kbd> + <kbd>A</kbd> 全选，观察画布上的节点分区与命名习惯。</li>
+    <li>在右侧 Node 属性区域浏览作者留下的注释，记录关键节点编号。</li>
+  </ol>
+</StepCard>
+
+<TipCard title="第一时间处理缺失模型" tone="warning">
+  <p>如果顶部状态栏提示 <em>Model not found</em>，立刻双击 <code>Checkpoint Loader</code> 选择本地存在的模型。路径不一致是最常见的阻塞点。</p>
+</TipCard>
+
+## 阶段二：识别可调节点
+
+<StepCard index={2} title="替换模型与 LoRA" summary="确保风格在可控范围" id="reuse-2">
+  <ol>
+    <li>选中 <code>Checkpoint Loader</code>，换成你信赖的基础模型。</li>
+    <li>若包含 <code>LoraLoader</code>，检查是否有对应文件。没有就将强度调为 0 或暂时断开。</li>
+    <li>查看 LoRA 的顺序与作用范围，避免和主模型风格冲突。</li>
+  </ol>
+</StepCard>
+
+<StepCard index={3} title="重写提示词" summary="先复刻，再扩充" id="reuse-3">
+  <ol>
+    <li>复制原作者的正向/反向提示词，贴到笔记中保留基线。</li>
+    <li>围绕主题做最小修改：替换主体、增加环境描述、删掉无关修饰。</li>
+    <li>保持常见的负向过滤词（如 <code>blurry</code>、<code>low quality</code>）以控制质量。</li>
+  </ol>
+</StepCard>
+
+<StepCard index={4} title="检查执行参数" summary="KSampler 决定稳定性" id="reuse-4">
+  <ol>
+    <li>确认采样步数、CFG、调度器没有极端值，必要时恢复到 <code>Steps 20 / CFG 7-9</code>。</li>
+    <li>保留或记录 Seed，便于和作者对比输出差异。</li>
+    <li>检查输出节点是否仍然连接到 <code>Save Image</code>，避免图像只在内存中存在。</li>
+  </ol>
+</StepCard>
+
+## 阶段三：固化你的模板
+
+<TipCard title="整理画布结构" tone="info">
+  <p>用 <kbd>G</kbd> 给节点分组，并在分组备注写上“模型资产”“提示词”“后处理”等标签。几周后回到这条工作流依然能快速上手。</p>
+</TipCard>
+
+<StepCard index={5} title="输出并备份" summary="JSON + PNG 双保险" id="reuse-5">
+  <ol>
+    <li>运行一次工作流，确认输出符合预期风格。</li>
+    <li>在顶部菜单选择 <em>Save (API format)</em> 导出 JSON。</li>
+    <li>将生成的 PNG 再次拖回 ComfyUI，并点击右侧的 Save 按钮，把工作流嵌入图片元数据。</li>
+  </ol>
+</StepCard>
+
+<TipCard title="推荐动作" tone="success">
+  <p>把常用的模型组合、LoRA 强度和提示词清单写入 README 或 Notion 页面，作为团队共享规范。模板价值在于可复制的决策，而不仅仅是节点连线。</p>
+</TipCard>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960" height="520" viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .node { fill: #0f172a; stroke: #1d4ed8; stroke-width: 3; rx: 18; ry: 18; }
+      .text { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 24px; fill: #e2e8f0; font-weight: 600; }
+      .desc { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 18px; fill: #cbd5f5; }
+      .callout { fill: #1d4ed8; opacity: 0.12; stroke: #93c5fd; stroke-dasharray: 8 6; stroke-width: 2; }
+      .tag { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 16px; fill: #1d4ed8; font-weight: 600; }
+    </style>
+  </defs>
+  <rect width="960" height="520" fill="#0b1120" rx="24" />
+  <rect x="60" y="70" width="220" height="100" class="node" />
+  <text x="90" y="120" class="text">节点</text>
+  <text x="90" y="150" class="desc">功能积木</text>
+  <rect x="360" y="70" width="220" height="100" class="node" />
+  <text x="390" y="120" class="text">工作流</text>
+  <text x="390" y="150" class="desc">积木搭建图</text>
+  <rect x="660" y="70" width="220" height="100" class="node" />
+  <text x="690" y="120" class="text">Checkpoint</text>
+  <text x="690" y="150" class="desc">画风模型</text>
+  <rect x="200" y="260" width="220" height="100" class="node" />
+  <text x="230" y="310" class="text">LoRA</text>
+  <text x="230" y="340" class="desc">细节风格微调</text>
+  <rect x="520" y="260" width="220" height="100" class="node" />
+  <text x="550" y="310" class="text">VAE</text>
+  <text x="550" y="340" class="desc">色彩滤镜</text>
+  <polyline points="170,170 170,260 200,260" stroke="#38bdf8" stroke-width="6" stroke-dasharray="12 10" fill="none" />
+  <polyline points="790,170 790,260 740,260" stroke="#38bdf8" stroke-width="6" stroke-dasharray="12 10" fill="none" />
+  <rect x="120" y="30" width="200" height="40" class="callout" />
+  <text x="140" y="58" class="tag">逻辑输入</text>
+  <rect x="380" y="30" width="200" height="40" class="callout" />
+  <text x="410" y="58" class="tag">连接规则</text>
+  <rect x="680" y="30" width="200" height="40" class="callout" />
+  <text x="710" y="58" class="tag">生成基底</text>
+</svg>

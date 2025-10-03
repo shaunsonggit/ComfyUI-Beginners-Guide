@@ -1,0 +1,43 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+:root.light {
+  color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-surface-light text-slate-900 dark:bg-surface-dark dark:text-slate-100 font-body antialiased;
+}
+
+main a {
+  @apply text-primary dark:text-primary-light hover:underline;
+}
+
+.prose {
+  @apply prose-slate dark:prose-invert;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-primary pl-4 italic;
+}
+
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.callout {
+  @apply rounded-lg border border-primary/40 bg-primary/5 p-4 text-sm dark:border-primary/60 dark:bg-primary/10;
+}

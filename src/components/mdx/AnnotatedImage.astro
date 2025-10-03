@@ -1,0 +1,39 @@
+﻿---
+interface Hotspot {
+  x: string;
+  y: string;
+  width: string;
+  height: string;
+  label?: string;
+  note?: string;
+}
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  hotspots?: Hotspot[];
+}
+
+const { src, alt, caption, hotspots = [] } = Astro.props as Props;
+---
+<figure class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+  <img src={src} alt={alt} loading="lazy" class="w-full object-cover" />
+  {hotspots.map((spot, index) => (
+    <div
+      class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight"
+      style={{ left: spot.x, top: spot.y, width: spot.width, height: spot.height }}
+    >
+      <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+        {index + 1}
+      </div>
+      {spot.note && (
+        <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200">
+          <p class="font-semibold text-red-500">{spot.label ?? `重点 ${index + 1}`}</p>
+          <p class="mt-1 leading-tight">{spot.note}</p>
+        </div>
+      )}
+    </div>
+  ))}
+  {caption && <figcaption class="border-t border-slate-200 bg-muted-light px-4 py-3 text-sm text-slate-600 dark:border-slate-700 dark:bg-muted-dark dark:text-slate-300">{caption}</figcaption>}
+</figure>

@@ -1,0 +1,36 @@
+﻿---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("tutorial");
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry }
+  }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await entry.render();
+---
+<BaseLayout title={data.title} description={data.description}>
+  <article class="prose prose-lg mx-auto max-w-3xl">
+    <header class="mb-8 space-y-3 text-center">
+      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">ComfyUI 核心教程</p>
+      <h1 class="text-4xl font-bold">{data.title}</h1>
+      <p class="text-slate-600 dark:text-slate-300">{data.description}</p>
+      {data.heroImage && (
+        <img src={data.heroImage} alt={`${data.title} 章节示意图`} class="mx-auto rounded-xl shadow-lg" loading="lazy" />
+      )}
+    </header>
+    <Content />
+    <footer class="mt-12 rounded-xl border border-primary/30 bg-primary/5 p-6 text-sm shadow-sm dark:border-primary/40 dark:bg-primary/10">
+      <p class="font-semibold text-primary">配套资源</p>
+      <ul class="mt-3 space-y-2">
+        <li><a class="text-primary hover:underline" href="/assets/workflows/text-to-image-basic.json" download>基础文生图工作流</a></li>
+        <li><a class="text-primary hover:underline" href="/assets/workflows/workflow-reuse-template.json" download>工作流复用模板</a></li>
+      </ul>
+    </footer>
+  </article>
+</BaseLayout>

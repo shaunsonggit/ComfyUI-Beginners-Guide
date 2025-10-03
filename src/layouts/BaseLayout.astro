@@ -1,0 +1,154 @@
+﻿---
+import { getCollection } from "astro:content";
+import Nav from "../components/Nav.astro";
+import "../styles/global.css";
+
+interface Breadcrumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  breadcrumbs?: Breadcrumb[];
+  hideSidebar?: boolean;
+}
+
+const rawTitle = Astro.props.title ?? "ComfyUI小白入门";
+const pageTitle = rawTitle + " | ComfyUI小白入门";
+const metaDescription =
+  Astro.props.description ?? "一份针对新手的 ComfyUI 工作流指南：拆解核心概念，搭建文本到图片流水线，并学会复用社区模板。";
+const breadcrumbs = Astro.props.breadcrumbs ?? [];
+const hideSidebar = Astro.props.hideSidebar ?? false;
+const chapters = (await getCollection("tutorial")).sort((a, b) => a.data.order - b.data.order);
+const normalizedPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <script is:inline>
+      (function () {
+        const storageKey = "comfyui-guide-theme";
+        const root = document.documentElement;
+        let mode = "light";
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) {
+            mode = saved;
+          } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            mode = "dark";
+          }
+        } catch (error) {
+          mode = "light";
+        }
+        root.classList.remove("light", "dark");
+        root.classList.add(mode);
+        root.style.colorScheme = mode;
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen bg-surface-light text-slate-900 transition-colors dark:bg-surface-dark dark:text-slate-100">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-primary"
+    >
+      跳到主要内容
+    </a>
+    <header class="sticky top-0 z-40 border-b border-slate-200 bg-surface-light/95 backdrop-blur dark:border-slate-700 dark:bg-surface-dark/90">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <a href="/" class="text-lg font-semibold text-primary transition hover:text-primary-light">ComfyUI小白入门</a>
+        <Nav />
+      </div>
+    </header>
+    <main id="main" class="mx-auto w-full max-w-6xl px-6 py-12">
+      <div class={hideSidebar ? "grid gap-10" : "grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)]"}>
+        {!hideSidebar && (
+          <aside class="hidden lg:flex lg:flex-col lg:justify-between lg:border-r lg:border-slate-200 lg:pr-8 dark:lg:border-slate-700">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">学习目录</p>
+              <nav class="mt-4 space-y-1 text-sm">
+                <a
+                  href="/"
+                  class:list={{
+                    "block rounded-lg px-3 py-2 transition": true,
+                    "bg-primary/10 text-primary": normalizedPath == "/",
+                    "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800": normalizedPath != "/"
+                  }}
+                  aria-current={normalizedPath == "/" ? "page" : undefined}
+                >
+                  站点概览
+                </a>
+                {chapters.map((chapter) => {
+                  const chapterPath = "/tutorial/" + chapter.slug;
+                  const isActive = normalizedPath.startsWith(chapterPath);
+                  return (
+                    <a
+                      href={chapterPath}
+                      class:list={{
+                        "block rounded-lg px-3 py-2 transition": true,
+                        "bg-primary/10 text-primary": isActive,
+                        "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800": !isActive
+                      }}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {chapter.data.title}
+                    </a>
+                  );
+                })}
+              </nav>
+            </div>
+            <div class="mt-10 rounded-xl border border-primary/25 bg-primary/5 p-4 text-xs text-slate-600 shadow-sm dark:border-primary/40 dark:bg-primary/10 dark:text-slate-200">
+              <p class="font-semibold text-primary">资源速达</p>
+              <ul class="mt-3 space-y-2">
+                <li>
+                  <a class="flex items-center justify-between rounded-lg px-3 py-2 hover:text-primary" href="#downloads">
+                    下载示例工作流
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="flex items-center justify-between rounded-lg px-3 py-2 hover:text-primary" href="https://github.com/" rel="noreferrer">
+                    GitHub 改进计划
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </aside>
+        )}
+        <div class="space-y-8">
+          {breadcrumbs.length > 0 && (
+            <nav aria-label="面包屑" class="text-xs text-slate-500 dark:text-slate-400">
+              <ol class="flex flex-wrap items-center gap-2">
+                {breadcrumbs.map((crumb, index) => (
+                  <li class="flex items-center gap-2">
+                    {crumb.href ? (
+                      <a class="underline-offset-2 hover:text-primary hover:underline" href={crumb.href}>{crumb.label}</a>
+                    ) : (
+                      <span>{crumb.label}</span>
+                    )}
+                    {index < breadcrumbs.length - 1 && <span class="text-slate-300 dark:text-slate-600">/</span>}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
+          <slot />
+        </div>
+      </div>
+    </main>
+    <footer class="border-t border-slate-200 bg-muted-light py-8 text-sm text-slate-500 dark:border-slate-700 dark:bg-muted-dark dark:text-slate-400">
+      <div class="mx-auto flex max-w-6xl flex-col gap-2 px-6 sm:flex-row sm:items-center sm:justify-between">
+        <p>&copy; {new Date().getFullYear()} ComfyUI小白入门 · 保持好奇，持续打磨工作流。</p>
+        <p>
+          <a class="hover:text-primary" href="https://github.com/" rel="noreferrer">贡献与反馈</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+﻿---
+title: 文生图实战：搭建最常用的文本到图片工作流
+description: 从零开始串联 7 个核心节点，5 分钟完成可复用的文本到图片链路。
+order: 2
+heroImage: /assets/images/workflow-outline.svg
+gifDemo: /assets/images/text-to-image-demo.gif
+keywords:
+  - 文本到图片
+  - KSampler
+  - 提示词编排
+  - VAE 解码
+  - 工作流模板
+goal: 独立搭建最小可用的文生图工作流，并理解每个节点的职责
+duration: 20 分钟
+difficulty: 初阶
+prerequisites:
+  - 已配置好基础 Checkpoint、VAE 并确认路径
+  - 熟悉 ComfyUI 的节点添加与连线操作
+deliverables:
+  - 一条可复用的文生图 JSON 工作流
+  - 不同提示词与模型切换的操作清单
+pitfalls:
+  - 将 CLIP 输出接错端口导致无图可出
+  - 忘记调整 Empty Latent Image 尺寸与采样步数
+  - 生成后未保存 Seed，无法复现效果
+---
+
+import AnnotatedImage from "../../components/mdx/AnnotatedImage.astro";
+import GifDemo from "../../components/mdx/GifDemo.astro";
+import StepCard from "../../components/mdx/StepCard.astro";
+import TipCard from "../../components/mdx/TipCard.astro";
+
+## 章节导言
+
+目标很明确：用最少的节点实现一条稳定、可扩展的文本到图片工作流。这条流水线要做到：随时替换模型、修改提示词、调整画幅、保存成品，不再靠别人分享的成品图摸索。
+
+<GifDemo
+  src="/assets/images/text-to-image-demo.gif"
+  alt="文本到图片工作流动态演示"
+  caption="节点依次亮起：准备资产 → 采样闭环 → 解码保存"
+  description="动图展示了完整任务流：先准备提示词与潜空间，再让 KSampler 工作，最后通过 VAE 输出图像。"
+/>
+
+<TipCard title="动手前必备检查" tone="info">
+  <ul>
+    <li>确认模型文件夹无中文路径，文件名与 ComfyUI 设置一致。</li>
+    <li>提前写好正向/反向提示词，避免边连线边纠结文案。</li>
+    <li>把输出文件夹清空或备份，方便定位最新成品。</li>
+  </ul>
+</TipCard>
+
+## 阶段一：筑好基础积木
+
+<StepCard index={1} title="加载模型底座" summary="Checkpoint Loader" id="step-1">
+  <ol>
+    <li>在左侧搜索 <code>Checkpoint Loader</code> 并双击添加。</li>
+    <li>选择常用模型（例：<code>sd_xl_base_1.0.safetensors</code>），保持默认 CLIP 与 VAE。</li>
+    <li>确认右侧 Inspector 中模型路径正常，无红色警告。</li>
+  </ol>
+</StepCard>
+
+<StepCard index={2} title="准备提示词资产" summary="双 CLIP Text Encode" id="step-2">
+  <ol>
+    <li>添加两个 <code>CLIP Text Encode</code> 节点，并分别重命名为「正向提示词」「反向提示词」。</li>
+    <li>把 <code>Checkpoint Loader / CLIP</code> 输出依次连到两个节点的 <code>clip</code> 端口。</li>
+    <li>
+      填入初始文案：
+      <div className="mt-2 space-y-1 text-xs">
+        <code>masterpiece, tranquil mossy forest, volumetric light</code>
+        <code>low quality, blurry, deformed</code>
+      </div>
+    </li>
+  </ol>
+</StepCard>
+
+<StepCard index={3} title="建立潜空间画布" summary="Empty Latent Image" id="step-3">
+  <ol>
+    <li>添加 <code>Empty Latent Image</code> 节点，设置宽高为 1024 × 1024。</li>
+    <li>保持 Batch Size 为 1，Sampling Steps 初期使用 20。</li>
+    <li>后续改画幅时只需修改这里的宽高，其他节点无需调整。</li>
+  </ol>
+</StepCard>
+
+## 阶段二：闭合生成核心
+
+<AnnotatedImage
+  src="/assets/images/workflow-outline.svg"
+  alt="文生图核心节点概览"
+  caption="左边准备资产，中间采样，右边解码输出"
+  hotspots={[
+    { x: "12%", y: "18%", width: "18%", height: "56%", label: "准备区", note: "Checkpoint、提示词与潜空间全部在这里完成" },
+    { x: "42%", y: "18%", width: "18%", height: "56%", label: "采样区", note: "KSampler 负责循环生成潜空间内容" },
+    { x: "72%", y: "18%", width: "18%", height: "56%", label: "输出区", note: "VAE Decode 将潜空间转换为最终像素" }
+  ]}
+/>
+
+<StepCard index={4} title="配置 KSampler" summary="四个输入缺一不可" id="step-4">
+  <ol>
+    <li>连线：<code>Checkpoint Loader / MODEL → KSampler / model</code>。</li>
+    <li>连线：正向、反向提示词分别进入 <code>positive</code> 与 <code>negative</code>。</li>
+    <li>连线：<code>Empty Latent Image / LATENT → KSampler / latent_image</code>。</li>
+    <li>参数建议：<code>Steps 20</code>、<code>CFG 9</code>、调度器选 <code>dpmpp_2m + karras</code>。</li>
+  </ol>
+</StepCard>
+
+<StepCard index={5} title="解码并保存" summary="VAE Decode → Save Image" id="step-5">
+  <ol>
+    <li>添加 <code>VAE Decode</code> 和 <code>Save Image</code> 节点。</li>
+    <li>将 <code>KSampler / LATENT</code> 接到 <code>VAE Decode / samples</code>，再把 <code>Checkpoint Loader / VAE</code> 接到 <code>vae</code> 端口。</li>
+    <li>最后把 <code>VAE Decode / IMAGE</code> 输出连到 <code>Save Image</code> 的输入。</li>
+  </ol>
+</StepCard>
+
+<TipCard title="快速验证任务流" tone="success">
+  <ol>
+    <li>点击右上角 <strong>Queue Prompt</strong>，确认控制台无红色报错。</li>
+    <li>在 <code>ComfyUI/output</code> 文件夹找到最新版图片，检查与预期提示词是否匹配。</li>
+    <li>想重现图像，记录采样器下方的 Seed 值，下次改为固定模式即可复现。</li>
+  </ol>
+</TipCard>
+
+## 阶段三：一套模板，多种玩法
+
+- **替换模型**：只在 Checkpoint Loader 里换模型文件，其余节点保持不动。
+- **调整画幅**：修改 Empty Latent Image 的宽高，注意保持 64 的倍数避免报错。
+- **锁定风格**：将 KSampler 的随机模式改为 set_seed，输入固定数值即可复刻。
+
+<TipCard title="立即导入标准模板" tone="info">
+  <p>点击页面底部的「基础文生图工作流 JSON」即可下载本文完成后的流程。拖入 ComfyUI 画布立刻开始改造。</p>
+</TipCard>
