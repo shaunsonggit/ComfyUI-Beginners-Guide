@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Nav from "../components/Nav.astro";
 import "../styles/global.css";
+import { stripBase, withBase } from "../utils/paths";
 
 interface Breadcrumb {
   label: string;
@@ -22,7 +23,9 @@ const metaDescription =
 const breadcrumbs = Astro.props.breadcrumbs ?? [];
 const hideSidebar = Astro.props.hideSidebar ?? false;
 const chapters = (await getCollection("tutorial")).sort((a, b) => a.data.order - b.data.order);
-const normalizedPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const currentPath = stripBase(Astro.url.pathname);
+const normalizedPath = currentPath.replace(/\/$/, "") || "/";
+const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefined;
 ---
 <!DOCTYPE html>
 <html lang="zh-CN" class="scroll-smooth">
@@ -61,7 +64,7 @@ const normalizedPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     </a>
     <header class="sticky top-0 z-40 border-b border-slate-200 bg-surface-light/95 backdrop-blur dark:border-slate-700 dark:bg-surface-dark/90">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="/" class="text-lg font-semibold text-primary transition hover:text-primary-light">ComfyUI小白入门</a>
+        <a href={resolveUrl("/")} class="text-lg font-semibold text-primary transition hover:text-primary-light">ComfyUI小白入门</a>
         <Nav />
       </div>
     </header>
@@ -73,7 +76,7 @@ const normalizedPath = Astro.url.pathname.replace(/\/$/, "") || "/";
               <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">学习目录</p>
               <nav class="mt-4 space-y-1 text-sm">
                 <a
-                  href="/"
+                  href={resolveUrl("/")}
                   class:list={{
                     "block rounded-lg px-3 py-2 transition": true,
                     "bg-primary/10 text-primary": normalizedPath == "/",
@@ -84,11 +87,12 @@ const normalizedPath = Astro.url.pathname.replace(/\/$/, "") || "/";
                   站点概览
                 </a>
                 {chapters.map((chapter) => {
-                  const chapterPath = "/tutorial/" + chapter.slug;
+                  const chapterPath = "/tutorial/" + chapter.slug + "/";
+                  const chapterHref = resolveUrl(chapterPath);
                   const isActive = normalizedPath.startsWith(chapterPath);
                   return (
                     <a
-                      href={chapterPath}
+                      href={chapterHref}
                       class:list={{
                         "block rounded-lg px-3 py-2 transition": true,
                         "bg-primary/10 text-primary": isActive,
@@ -128,7 +132,7 @@ const normalizedPath = Astro.url.pathname.replace(/\/$/, "") || "/";
                 {breadcrumbs.map((crumb, index) => (
                   <li class="flex items-center gap-2">
                     {crumb.href ? (
-                      <a class="underline-offset-2 hover:text-primary hover:underline" href={crumb.href}>{crumb.label}</a>
+                      <a class="underline-offset-2 hover:text-primary hover:underline" href={resolveUrl(crumb.href)}>{crumb.label}</a>
                     ) : (
                       <span>{crumb.label}</span>
                     )}
@@ -152,3 +156,4 @@ const normalizedPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     </footer>
   </body>
 </html>
+

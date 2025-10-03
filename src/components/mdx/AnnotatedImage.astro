@@ -1,4 +1,6 @@
 ﻿---
+import { withBase } from "../../utils/paths";
+
 interface Hotspot {
   x: string;
   y: string;
@@ -16,9 +18,10 @@ interface Props {
 }
 
 const { src, alt, caption, hotspots = [] } = Astro.props as Props;
+const resolvedSrc = withBase(src) ?? src;
 ---
 <figure class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
-  <img src={src} alt={alt} loading="lazy" class="w-full object-cover" />
+  <img src={resolvedSrc} alt={alt} loading="lazy" class="w-full object-cover" />
   {hotspots.map((spot, index) => (
     <div
       class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight"
