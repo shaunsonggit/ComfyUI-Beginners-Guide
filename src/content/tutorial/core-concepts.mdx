@@ -1,85 +1,86 @@
 ---
-title: 核心概念：用积木理解 ComfyUI
-description: 把节点、工作流、Checkpoint、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。
+title: 核心概念：用搭积木的方式理解 ComfyUI
+description: 把节点、工作流、模型加载、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。
 order: 1
-heroImage: /ComfyUI-Beginners-Guide/assets/uploads/core-concepts-map.svg
+heroImage: /ComfyUI-Beginners-Guide/assets/uploads/1.svg
 keywords:
   - 节点
   - 工作流
   - 模型管理
   - LoRA
   - VAE
-goal: 10 分钟掌握 ComfyUI 的核心构件与协作关系
+goal: 10 分钟梳理 ComfyUI 的核心协作关系
 duration: 10 分钟
-difficulty: 零基础
+difficulty: 入门
 prerequisites:
-  - 已成功打开 ComfyUI 画布
-  - 知道如何添加与连线节点
+  - 已成功启动 ComfyUI
+  - 知道如何新增并连接节点
 deliverables:
-  - 清楚区分节点输入输出类型
-  - 能够解释一条基础工作流的结构
+  - 弄清常见节点的输入输出类型
+  - 能够快速判断一条工作流的结构
 pitfalls:
-  - 只记节点名字，不理解数据类型
-  - 忽略 VAE 导致导出图片灰度异常
-  - 误将 LoRA 当作模型替换而非叠加
+  - 只记节点名称，不清楚传递的数据类型
+  - 忽视 VAE 导致输出图像灰度异常
+  - 将 LoRA 误当成模型替换而不是叠加
+ctaButtons: []
 ---
-
 import AnnotatedImage from "../../components/mdx/AnnotatedImage.astro";
 import TipCard from "../../components/mdx/TipCard.astro";
 
-## 章节导言
+## 节点导言
 
-一条稳固的工作流始于正确的认知框架。本节不上来就告诉你“怎么连”，而是拆解“为什么这样连”。把 ComfyUI 想象成一盒功能积木：节点决定能力，连线决定顺序，模型资产决定结果风格。只要理解这些角色的协作逻辑，后续任何复杂工作流都是模块重组而已。
+一条稳定的工作流始于正确的认知框架。本章不直接告诉你“怎么连”，而是拆解“为什么这样连”。把 ComfyUI 想象成一盒功能积木：节点决定能力，连线决定顺序，模型资产决定结果风格。理解这些角色的协作逻辑，后续任何复杂 workflow 都只是模块重组而已。
 
-<AnnotatedImage
-  src="/assets/images/core-concepts-map.svg"
-  alt="ComfyUI 核心概念导图"
-  caption="五大构件沿着“输入→运算→输出”的链路排布，每个模块只承担单一职责"
-  hotspots={[
-    { x: "8%", y: "14%", width: "24%", height: "24%", label: "节点", note: "每一个节点都是独立的功能单位，负责完成一件具体工作。" },
-    { x: "38%", y: "14%", width: "24%", height: "24%", label: "工作流", note: "节点通过连线形成执行顺序，线条表示数据的流动方向。" },
-    { x: "68%", y: "14%", width: "24%", height: "24%", label: "Checkpoint", note: "大模型像画风底座，决定整体输出方向。" },
-    { x: "22%", y: "46%", width: "24%", height: "24%", label: "LoRA", note: "附加风格插件，叠加在模型之上细调人物、质感与构图。" },
-    { x: "52%", y: "46%", width: "24%", height: "24%", label: "VAE", note: "负责把潜空间解码为真正的 RGB 像素。" }
-  ]}
-/>
+![](/ComfyUI-Beginners-Guide/assets/uploads/2.svg)
 
-## 记住这五句心法
+## 工作流例图
 
-1. **节点 Node**：一件事、一个输入输出约定，毫不含糊。
-2. **工作流 Workflow**：有向图写成的操作剧本，线条表示数据流动方向。
-3. **Checkpoint**：画风基底，换了它等于换了整个画面语言。
-4. **LoRA**：风格叠加器，覆盖在模型之上细调人物、质感与构图。
-5. **VAE**：色彩翻译官，不解码就看不到真正的成品。
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193054_297.png)
 
 <TipCard title="端口类型必须一一匹配" tone="info">
-  <p>ComfyUI 不会阻止你乱连线，但它会在执行时报错。辨认端口旁的标签，例如 <code>MODEL</code>、<code>CONDITIONING</code>，只有类型一致才能传输数据。悬停时的高亮提示就是系统在告诉你“这里能插”。</p>
+  <p>ComfyUI 不会阻止你连线，但在执行时会报错。注意端口上的标签，例如 <code>MODEL</code>、<code>CONDITIONING</code>，只有类型一致才能传递数据。提示框出现红色就表示端口类型不兼容。</p>
 </TipCard>
 
-## 节点家族的三种输出
-![描述文案](/ComfyUI-Beginners-Guide/public/assets/uploads/微信图片_20250929165502_3397_133.png)
+## 节点输出的三种分类
 
-public/assets/uploads/微信图片_20250929165502_3397_133.png
+* **控制类**：<code>MODEL</code>、<code>VAE</code>、<code>CLIP</code> 属于权重或编码器，说明这条线在告诉下游“使用哪种模型”。
 
-- **数据类**：LATENT、CONDITIONING、IMAGE 分别代表潜空间、文本特征与最终像素。
-- **控制类**：MODEL、VAE、CLIP 属于权重或编码器引用，告诉下游该用哪份模型。
-- **行为类**：例如 SaveImage，没有输出端口但会触发文件写入。
+  1. 节点类型1：Model（unet加载器）、VAE、Clip分别加载
+  2. 节点类型2：Model、VAE、Clip合在一个Checkpoint加载器里；**有的模型带有clip和vae就用checkpoint，没有的话用类型1里的方式分别加载**
+  3. LoRA模型：（Low-Rank Adaptation，低秩适应）是一种高效的模型微调技术，简单理解为在基座模型的基础上加了一层滤镜，为模型增添新概念、角色或画风，或者提速等。**LoRA模型一般都是对应某一个基座模型，不同基座模型的LoRA不能通用。**
+* ![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193507_757.png)
+* **数据类**：<code>LATENT</code>、<code>CONDITIONING</code>、<code>IMAGE</code> 分别表示潜空间、文字特征与最终像素。
 
-掌握这些分类后，你会知道“这一条线送出去的到底是什么”，也能避免错把控制信号当作可见图像。
+  * **提示词**的注入在这个部分完成
+* ![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193214_647.png)
+* **行为类**：例如 <code>K采样器</code>、<code>保存图片</code>，没有输出端口但会触发执行并写入文件。
 
-## 两条不容忽视的连接规则
+ ![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193629_492.png)
+  * K采样器是处理的中枢，相当于大脑，把输入的信息处理（去除噪点）生成图像
 
-1. **采样必备闭环**：Checkpoint Loader 给出的 MODEL 与 CLIP 必须同时进入 KSampler，再配上 Empty Latent Image，缺一不可。
-2. **所有图片都要过 VAE**：只要想输出 PNG/JPEG，就得让潜空间走一趟 VAEDecode，否则只能得到一堆噪声矩阵。
+    * 魔法数字 (随机种)：画的身份证号，同样号码画出同样的画。
+    * 画完之后 (运行后操作)：画完一张后，要不要自动换个新号码。
+    * 思考步数 (步数)：画画机把画变清楚，总共思考了多少次。
+    * 听话程度 (CFG)：数字越大，画画机就越严格听你的话。
+    * 画画方法 (采样器)：它选择用哪一种笔刷来画画。
+    * 画画节奏 (调度器)：控制画画机每一步下笔的轻重和快慢。
+    * 创新程度 (降噪)：1.0代表在一张全新的白纸上开始画。0.1代表整体不变，仅修改小细节。
+    * 思考步数 (步数)：画画机把画变清楚，总共思考了多少次。
+* 掌握分类后，你就能看懂一条工作流究竟在做什么，也能避免把控制信号误当成图像数据。
 
-<TipCard title="最常见的连线错误" tone="warning">
-  <p>新手经常遗漏 Empty Latent Image 或忘记把 VAE 接回 VAEDecode，导致生成阶段直接报 <em>missing input</em>。保持“采样闭环 + 解码闭环”的意识，任何工作流都跑得通。</p>
+## 两条最容易忽视的连线规则
+
+1. **采样器需要完整环路**：<code>Checkpoint Loader</code> 输出的 <code>MODEL</code> 与 <code>CLIP</code> 必须同时进入 <code>KSampler</code>，再搭配 <code>Empty Latent Image</code>，缺一不可。
+2. **所有图片都要经过 VAE**：只想输出 PNG/JPEG，就要让潜空间经过一次 <code>VAEDecode</code>，否则只能得到一张灰度噪点图。
+
+<TipCard title="最常见的连线报错" tone="warning">
+  <p>初学者容易漏掉 <code>Empty Latent Image</code>，或者把 <code>VAE</code> 接回 <code>VAEDecode</code>，导致执行阶段直接报 <em>missing input</em>。牢记“采样器环路 + 解码环路”这句口诀，工作流就能畅通。</p>
 </TipCard>
 
-## 评估一个工作流是否值得复用
+## 如何判断一个工作流是否值得复用
 
-- **节点是否为原生**：只要没有出现 Script/Custom 节点，大概率无需额外安装插件。
-- **模型路径是否可用**：留意作者的路径是否和你相同，不存在就换成自己的模型文件名。
-- **参数是否合理**：像采样步数、CFG、噪声调度器都写在 KSampler 里。换模型时记得同步检查这些值。
+* **节点是否为原生**：只要没有出现 Script/Custom 节点，通常无需额外安装插件。
+* **模型路径是否可用**：注意作者的路径是否与你一致，若不同要改成自己的模型文件。
+* **参数是否合理**：如采样步数、CFG、分辨率等都写在 <code>KSampler</code> 里，换模型时别忘了同步检查。
 
-具备这份概念地图后，再看社区分享的复杂工作流，你能迅速判断“哪些节点是拿来就用，哪些节点必须替换”。这就是建立产品直觉的第一步。
+把这章当作快速通关指南：看懂结构后，再去学习带标注的复用工作流，你能瞬间判断“哪些节点是装饰，哪些节点必须替换”。这正是建立 ComfyUI 直觉的第一步。
