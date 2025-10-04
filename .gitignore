@@ -1,1 +1,15 @@
+﻿# Dependencies
 node_modules
+
+# Build outputs
+.astro
+dist
+
+# Environment variables
+.env
+.env.local
+.env.*
+!.env.example
+
+# Misc
+.DS_Store
