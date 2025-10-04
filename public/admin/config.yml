@@ -84,4 +84,14 @@ collections:
           name: pitfall
           label: 条目
           widget: string
+      - label: 操作按钮
+        name: ctaButtons
+        widget: list
+        required: false
+        collapsed: true
+        summary: "{{fields.label}} → {{fields.url}}"
+        fields:
+          - { label: 按钮文案, name: label, widget: string }
+          - { label: 链接地址, name: url, widget: string }
+          - { label: 下载文件？, name: download, widget: boolean, default: false }
       - { name: body, label: 正文内容, widget: markdown }

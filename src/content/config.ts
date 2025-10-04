@@ -14,7 +14,16 @@ const tutorial = defineCollection({
     difficulty: z.string().optional(),
     prerequisites: z.array(z.string()).default([]),
     deliverables: z.array(z.string()).default([]),
-    pitfalls: z.array(z.string()).default([])
+    pitfalls: z.array(z.string()).default([]),
+    ctaButtons: z
+      .array(
+        z.object({
+          label: z.string(),
+          url: z.string(),
+          download: z.boolean().default(false)
+        })
+      )
+      .default([])
   })
 });
 

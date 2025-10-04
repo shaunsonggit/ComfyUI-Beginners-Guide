@@ -4,10 +4,12 @@ import { getCollection } from "astro:content";
 import { withBase } from "../utils/paths";
 
 const chapters = (await getCollection("tutorial")).sort((a, b) => a.data.order - b.data.order);
-const coreConcepts = chapters.find((entry) => entry.slug === "core-concepts");
-const textToImage = chapters.find((entry) => entry.slug === "text-to-image");
-const workflowReuse = chapters.find((entry) => entry.slug === "workflow-reuse");
 const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefined;
+
+const firstChapter = chapters[0];
+const secondChapter = chapters[1];
+const primaryCtaAnchor = secondChapter ? `#${secondChapter.slug}` : firstChapter ? `#${firstChapter.slug}` : "#downloads";
+const secondaryCtaAnchor = firstChapter ? `#${firstChapter.slug}` : "#downloads";
 ---
 <BaseLayout>
   <section class="rounded-3xl bg-gradient-to-br from-primary/10 via-surface-light to-muted-light p-10 text-slate-800 shadow-lg ring-1 ring-primary/20 dark:from-primary/15 dark:via-surface-dark dark:to-muted-dark dark:text-slate-100">
@@ -15,124 +17,105 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
       <p class="text-sm uppercase tracking-[0.35em] text-primary">ComfyUI 快速上手</p>
       <h1 class="text-4xl font-bold sm:text-5xl">从核心概念到常用工作流，15 分钟建立你的 ComfyUI 直觉</h1>
       <p class="text-lg text-slate-600 dark:text-slate-300">
-        本教程专注于最常用、最实用的 ComfyUI 工作流。通过三大章节，你将理解节点如何协同、亲手搭建文本到图片流水线，并学会复用社区工作流文件。
+        本教程专注于最常用、最实用的 ComfyUI 工作流。现在章节来自 CMS，新增内容会自动出现在这里，让你逐个突破常见场景。
       </p>
       <div class="flex flex-wrap gap-3 text-sm">
-        <a class="rounded-md bg-primary px-4 py-2 font-semibold text-white shadow-lg shadow-primary/30 transition hover:bg-primary-dark" href="#text-to-image">直接开始动手</a>
-        <a class="rounded-md border border-primary px-4 py-2 font-semibold text-primary transition hover:bg-primary/10" href="#concepts">先熟悉核心概念</a>
+        <a class="rounded-md bg-primary px-4 py-2 font-semibold text-white shadow-lg shadow-primary/30 transition hover:bg-primary-dark" href={primaryCtaAnchor}>直接开始动手</a>
+        <a class="rounded-md border border-primary px-4 py-2 font-semibold text-primary transition hover:bg-primary/10" href={secondaryCtaAnchor}>先熟悉核心概念</a>
       </div>
     </div>
   </section>
 
-  <section id="concepts" class="mt-16 space-y-6">
-    <header class="flex flex-col gap-2">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">章节 01</p>
-      <h2 class="text-3xl font-bold">核心概念解析：用积木搭起图像生成链路</h2>
-      <p class="text-slate-600 dark:text-slate-300">
-        以最贴近实际操作的比喻解释节点、工作流、Checkpoint、LoRA、VAE，让你在开始操作前先建立逻辑模型。
-      </p>
-    </header>
-    {coreConcepts ? (
-      <article class="grid gap-8 rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        {coreConcepts.data.heroImage && (
-          <img src={resolveUrl(coreConcepts.data.heroImage)} alt="核心概念示意图" class="rounded-xl shadow-lg ring-1 ring-primary/20" loading="lazy" />
-        )}
-        <div class="flex flex-col gap-4">
-          <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{coreConcepts.data.description}</p>
-          <ul class="flex flex-wrap gap-2 text-xs text-primary">
-            {coreConcepts.data.keywords?.map((keyword) => (
-              <li class="rounded-full border border-primary/40 px-3 py-1">{keyword}</li>
-            ))}
-          </ul>
-          <div class="mt-auto flex flex-wrap gap-4 text-sm">
-            <a class="inline-flex items-center gap-2 rounded-md border border-primary px-4 py-2 font-semibold text-primary transition hover:bg-primary/10" href={resolveUrl(`tutorial/${coreConcepts.slug}/`)}>
-              阅读完整章节
-            </a>
-          </div>
-        </div>
-      </article>
-    ) : (
-      <div class="callout">章节内容尚未准备好，稍后再来看。</div>
-    )}
-  </section>
+  {chapters.map((chapter, index) => {
+    const orderNumber = chapter.data.order ?? index + 1;
+    const displayNumber = orderNumber.toString().padStart(2, "0");
+    const sectionId = chapter.slug;
+    const mediaSrc = chapter.data.gifDemo ?? chapter.data.heroImage;
+    const mediaAlt = chapter.data.gifDemo ? `${chapter.data.title} 动图演示` : `${chapter.data.title} 示意图`;
+    const keywords = chapter.data.keywords ?? [];
+    const deliverables = chapter.data.deliverables ?? [];
+    const extraButtons = chapter.data.ctaButtons ?? [];
+    const ctas = [
+      { label: "阅读完整章节", url: `tutorial/${chapter.slug}/`, download: false },
+      ...extraButtons
+    ];
 
-  <section id="text-to-image" class="mt-24 space-y-6">
-    <header class="flex flex-col gap-2">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">章节 02</p>
-      <h2 class="text-3xl font-bold">文生图实战：15 分钟搭起第一条工作流</h2>
-      <p class="text-slate-600 dark:text-slate-300">
-        用最少节点覆盖完整的文本到图片流程，每一步都配有红色标注与动图演示，确保 100% 可复现。
-      </p>
-    </header>
-    {textToImage ? (
-      <article class="grid gap-8 rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <div class="flex flex-col gap-4">
-          <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{textToImage.data.description}</p>
-          <ul class="flex flex-wrap gap-2 text-xs text-primary">
-            {textToImage.data.keywords?.map((keyword) => (
-              <li class="rounded-full border border-primary/40 px-3 py-1">{keyword}</li>
-            ))}
-          </ul>
-          <div class="mt-auto flex flex-wrap gap-4 text-sm">
-            <a class="inline-flex items-center gap-2 rounded-md border border-primary px-4 py-2 font-semibold text-primary transition hover:bg-primary/10" href={resolveUrl(`tutorial/${textToImage.slug}/`)}>
-              查看动图演示
-            </a>
-            <a class="inline-flex items-center gap-2 rounded-md border border-primary/40 px-4 py-2 font-semibold text-primary transition hover:bg-primary/10" href={resolveUrl("assets/workflows/text-to-image-basic.json")} download>
-              下载示例工作流
-            </a>
+    return (
+      <section id={sectionId} class={`space-y-6 ${index === 0 ? "mt-16" : "mt-24"}`}>
+        <header class="flex flex-col gap-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">章节 {displayNumber}</p>
+          <h2 class="text-3xl font-bold">{chapter.data.title}</h2>
+          <p class="text-slate-600 dark:text-slate-300">{chapter.data.description}</p>
+        </header>
+        <article
+          class:list={{
+            "rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70": true,
+            "grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]": Boolean(mediaSrc),
+            "flex flex-col gap-6": !mediaSrc
+          }}
+        >
+          {mediaSrc && (
+            <img src={resolveUrl(mediaSrc)} alt={mediaAlt} class="w-full rounded-xl border border-primary/20 shadow-lg" loading="lazy" />
+          )}
+          <div class="flex flex-col gap-4">
+            <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{chapter.data.goal ?? chapter.data.description}</p>
+            {keywords.length > 0 && (
+              <ul class="flex flex-wrap gap-2 text-xs text-primary">
+                {keywords.map((keyword) => (
+                  <li class="rounded-full border border-primary/40 px-3 py-1">{keyword}</li>
+                ))}
+              </ul>
+            )}
+            {(chapter.data.goal || chapter.data.duration || chapter.data.difficulty) && (
+              <dl class="grid gap-4 text-xs text-slate-500 dark:text-slate-300 sm:grid-cols-3">
+                {chapter.data.goal && (
+                  <div>
+                    <dt class="font-semibold text-slate-600 dark:text-slate-200">学习目标</dt>
+                    <dd class="mt-1 text-slate-600 dark:text-slate-300">{chapter.data.goal}</dd>
+                  </div>
+                )}
+                {chapter.data.duration && (
+                  <div>
+                    <dt class="font-semibold text-slate-600 dark:text-slate-200">预计时间</dt>
+                    <dd class="mt-1 text-slate-600 dark:text-slate-300">{chapter.data.duration}</dd>
+                  </div>
+                )}
+                {chapter.data.difficulty && (
+                  <div>
+                    <dt class="font-semibold text-slate-600 dark:text-slate-200">难度</dt>
+                    <dd class="mt-1 text-slate-600 dark:text-slate-300">{chapter.data.difficulty}</dd>
+                  </div>
+                )}
+              </dl>
+            )}
+            {deliverables.length > 0 && (
+              <div class="space-y-2">
+                <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">完成后你将获得</p>
+                <ul class="list-disc space-y-1 pl-5 text-sm leading-snug text-slate-600 dark:text-slate-300">
+                  {deliverables.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div class="mt-auto flex flex-wrap gap-4 text-sm">
+              {ctas.map((cta, ctaIndex) => (
+                <a
+                  class={ctaIndex === 0
+                    ? "inline-flex items-center gap-2 rounded-md border border-primary px-4 py-2 font-semibold text-primary transition hover:bg-primary/10"
+                    : "inline-flex items-center gap-2 rounded-md border border-primary/40 px-4 py-2 font-semibold text-primary transition hover:bg-primary/10"}
+                  href={resolveUrl(cta.url)}
+                  download={cta.download ? "" : undefined}
+                >
+                  {cta.label}
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
-        {textToImage.data.gifDemo ? (
-          <img src={resolveUrl(textToImage.data.gifDemo)} alt="文生图工作流动图" class="w-full rounded-xl border border-primary/20 shadow-lg" loading="lazy" />
-        ) : (
-          textToImage.data.heroImage && (
-            <img src={resolveUrl(textToImage.data.heroImage)} alt="文生图节点示意图" class="w-full rounded-xl shadow-lg" loading="lazy" />
-          )
-        )}
-      </article>
-    ) : (
-      <div class="callout">章节内容尚未准备好，稍后更新。</div>
-    )}
-  </section>
-
-  <section id="workflow-reuse" class="mt-24 space-y-6">
-    <header class="flex flex-col gap-2">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">章节 03</p>
-      <h2 class="text-3xl font-bold">工作流复用：用好社区资源并个性化改造</h2>
-      <p class="text-slate-600 dark:text-slate-300">
-        学会加载别人分享的 JSON 工作流，快速定位关键节点并替换模型、提示词，把优秀方案变成自己的常备模板。
-      </p>
-    </header>
-    {workflowReuse ? (
-      <article class="grid gap-8 rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        {workflowReuse.data.gifDemo ? (
-          <img src={resolveUrl(workflowReuse.data.gifDemo)} alt="工作流复用演示动图" class="w-full rounded-xl border border-primary/20 shadow-lg" loading="lazy" />
-        ) : (
-          workflowReuse.data.heroImage && (
-            <img src={resolveUrl(workflowReuse.data.heroImage)} alt="工作流复用示意图" class="w-full rounded-xl shadow-lg" loading="lazy" />
-          )
-        )}
-        <div class="flex flex-col gap-4">
-          <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{workflowReuse.data.description}</p>
-          <ul class="flex flex-wrap gap-2 text-xs text-primary">
-            {workflowReuse.data.keywords?.map((keyword) => (
-              <li class="rounded-full border border-primary/40 px-3 py-1">{keyword}</li>
-            ))}
-          </ul>
-          <div class="mt-auto flex flex-wrap gap-4 text-sm">
-            <a class="inline-flex items-center gap-2 rounded-md border border-primary px-4 py-2 font-semibold text-primary transition hover:bg-primary/10" href={resolveUrl(`tutorial/${workflowReuse.slug}/`)}>
-              阅读改造策略
-            </a>
-            <a class="inline-flex items-center gap-2 rounded-md border border-primary/40 px-4 py-2 font-semibold text-primary transition hover:bg-primary/10" href={resolveUrl("assets/workflows/workflow-reuse-template.json")} download>
-              下载复用模板
-            </a>
-          </div>
-        </div>
-      </article>
-    ) : (
-      <div class="callout">章节内容即将上线。</div>
-    )}
-  </section>
+        </article>
+      </section>
+    );
+  })}
 
   <section id="downloads" class="mt-24 rounded-3xl border border-primary/30 bg-primary/5 p-10 shadow-lg dark:border-primary/40 dark:bg-primary/10">
     <h2 class="text-2xl font-bold">配套资源下载</h2>
@@ -143,4 +126,3 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
     </ul>
   </section>
 </BaseLayout>
-
