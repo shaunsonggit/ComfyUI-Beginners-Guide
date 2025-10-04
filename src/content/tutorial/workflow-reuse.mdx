@@ -1,8 +1,8 @@
-﻿---
+---
 title: 工作流复用：加载社区文件并改成自己的常用模板
 description: 学会导入 JSON / PNG 工作流、替换模型与提示词，以及保存为个人模板。
 order: 3
-heroImage: /assets/images/workflow-outline.svg
+heroImage: /ComfyUI-Beginners-Guide/assets/uploads/workflow-outline.svg
 gifDemo: /assets/images/workflow-reuse-demo.gif
 keywords:
   - 工作流复用
@@ -24,7 +24,6 @@ pitfalls:
   - 不检查 LoRA 强度，图像风格失控
   - 直接覆盖原作者提示词，失去复现渠道
 ---
-
 import GifDemo from "../../components/mdx/GifDemo.astro";
 import StepCard from "../../components/mdx/StepCard.astro";
 import TipCard from "../../components/mdx/TipCard.astro";
@@ -41,6 +40,8 @@ import TipCard from "../../components/mdx/TipCard.astro";
 />
 
 ## 阶段一：导入并建立上下文
+
+https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/v2/cover/KRfCbaAYUoOlNmxgac1cYQcHnBd/?fallback_source=1&height=1280&mount_node_token=MXoMdZlIhoPenwxXniQcvSsjngf&mount_point=docx_image&policy=allow_down&width=1280
 
 <StepCard index={1} title="导入 JSON / PNG" summary="拖放到画布" id="reuse-1">
   <ol>

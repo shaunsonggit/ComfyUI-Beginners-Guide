@@ -1,0 +1,87 @@
+﻿backend:
+  name: github
+  repo: shaunsonggit/ComfyUI-Beginners-Guide
+  branch: main
+  open_authoring: true
+  commit_messages:
+    create: "feat(cms): create {{collection}} {{slug}}"
+    update: "chore(cms): update {{collection}} {{slug}}"
+    delete: "chore(cms): delete {{collection}} {{slug}}"
+    uploadMedia: "chore(cms): upload media"
+    deleteMedia: "chore(cms): delete media"
+media_folder: public/assets/uploads
+public_folder: /ComfyUI-Beginners-Guide/assets/uploads
+publish_mode: editorial_workflow
+local_backend: true
+slug:
+  clean_accents: true
+  encoding: unicode
+  sanitize_replacement: "-"
+collections:
+  - name: tutorial
+    label: 教程章节
+    label_singular: 章节
+    folder: src/content/tutorial
+    extension: mdx
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    preview_path: tutorial/{{slug}}/
+    summary: "第{{order}}章 · {{title}}"
+    sortable_fields: [order, title]
+    editor:
+      preview: false
+    fields:
+      - { name: title, label: 标题, widget: string }
+      - { name: description, label: 摘要, widget: text }
+      - { name: order, label: 排序序号, widget: number, value_type: int }
+      - name: heroImage
+        label: 章节主图
+        widget: image
+        required: false
+        allow_multiple: false
+      - name: gifDemo
+        label: 动图演示
+        widget: image
+        required: false
+        allow_multiple: false
+      - name: keywords
+        label: 关键词标签
+        widget: list
+        allow_add: true
+        default: []
+        field:
+          name: keyword
+          label: 标签名
+          widget: string
+      - { name: goal, label: 学习目标, widget: string, required: false }
+      - { name: duration, label: 时间预估, widget: string, required: false }
+      - { name: difficulty, label: 难度, widget: string, required: false }
+      - name: prerequisites
+        label: 前置准备
+        widget: list
+        allow_add: true
+        default: []
+        field:
+          name: prerequisite
+          label: 条目
+          widget: string
+      - name: deliverables
+        label: 产出物
+        widget: list
+        allow_add: true
+        default: []
+        field:
+          name: deliverable
+          label: 条目
+          widget: string
+      - name: pitfalls
+        label: 易错提醒
+        widget: list
+        allow_add: true
+        default: []
+        field:
+          name: pitfall
+          label: 条目
+          widget: string
+      - { name: body, label: 正文内容, widget: markdown }

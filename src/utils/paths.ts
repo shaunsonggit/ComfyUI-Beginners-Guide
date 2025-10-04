@@ -1,4 +1,4 @@
-const EXTERNAL_PROTOCOL = /^(?:[a-z]+:)?\/\//i;
+﻿const EXTERNAL_PROTOCOL = /^(?:[a-z]+:)?\/\//i;
 
 export function withBase(path?: string | null): string | undefined {
   if (path == null) {
@@ -19,7 +19,14 @@ export function withBase(path?: string | null): string | undefined {
   }
 
   const base = normalizeBase(import.meta.env.BASE_URL ?? "/");
-  const trimmed = path.replace(/^\//, "");
+  if (base !== "/") {
+    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+    if (normalizedPath.startsWith(base)) {
+      return normalizedPath;
+    }
+  }
+
+  const trimmed = path.replace(/^\/+/, "");
   return `${base}${trimmed}`;
 }
 
