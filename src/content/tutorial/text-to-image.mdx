@@ -46,13 +46,18 @@ import TipCard from "../../components/mdx/TipCard.astro";
 
 ## 阶段一：筑好基础积木
 
-<StepCard index={1} title="加载模型底座" summary="Checkpoint Loader" id="step-1">
+<StepCard index={1} title="加载模型底座" summary="模型加载：UNET、CLIP、VAE" id="step-1">
   <ol>
-    <li>在左侧搜索 <code>Checkpoint Loader</code> 并双击添加。</li>
-    <li>选择常用模型（例如 <code>sd_xl_base_1.0.safetensors</code>），保持默认 CLIP 与 VAE。</li>
-    <li>确认右侧 Inspector 中模型路径正常，无红色警告。</li>
+    <li>双击搜索 <code>unet加载器</code>等节点， 并双击添加。</li>
+    <li>分别选择unet、clip、vae配套的模型（例如 <code>qwen_image_fp8_e4m3fn</code>）,</li>
   </ol>
 </StepCard>
+xxxx
+
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193507_757.png)
+
+
+xxxx
 
 <StepCard index={2} title="准备提示词资产" summary="双 CLIP Text Encode" id="step-2">
   <ol>
@@ -123,9 +128,9 @@ import TipCard from "../../components/mdx/TipCard.astro";
 
 ## 阶段三：一套模板，多种玩法
 
-- **替换模型**：只需要在 Checkpoint Loader 中选择新模型，其余节点保持不动。
-- **调整画幅**：修改 Empty Latent Image 的宽高，建议保持 64 的倍数避免报错。
-- **锁定风格**：将 KSampler 的随机模式改为 <code>set_seed</code>，输入固定数值即可复刻。
+* **替换模型**：只需要在 Checkpoint Loader 中选择新模型，其余节点保持不动。
+* **调整画幅**：修改 Empty Latent Image 的宽高，建议保持 64 的倍数避免报错。
+* **锁定风格**：将 KSampler 的随机模式改为 <code>set_seed</code>，输入固定数值即可复刻。
 
 <TipCard title="立即导入标准模板" tone="info">
   <p>点击页面底部的「基础文生图工作流 JSON」即可下载本文完成后的流程，拖入 ComfyUI 画布立刻开始改造。</p>
