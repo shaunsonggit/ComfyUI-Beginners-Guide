@@ -1,6 +1,7 @@
 ﻿---
 import { getCollection, getEntry } from "astro:content";
 import Nav from "../components/Nav.astro";
+import JoinChatCard from "../components/JoinChatCard.astro";
 import "../styles/global.css";
 import { stripBase, withBase } from "../utils/paths";
 
@@ -138,6 +139,9 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
                 </ul>
               </div>
             )}
+            <div class="mt-10 lg:mt-auto lg:sticky lg:bottom-6">
+              <JoinChatCard />
+            </div>
           </aside>
         )}
         <div class="space-y-8">
