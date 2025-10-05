@@ -1,32 +1,33 @@
 ---
 title: 工作流复用：加载社区文件并改成自己的常用模板
-description: 学会导入 JSON / PNG 工作流、替换模型与提示词，以及保存为个人模板。
+description: 学会导入工作流、替换模型与提示词，并解决报错问题，最后保存为个人模板。
 order: 3
-heroImage: /ComfyUI-Beginners-Guide/assets/uploads/workflow-outline.svg
-gifDemo: /assets/images/workflow-reuse-demo.gif
+heroImage: /ComfyUI-Beginners-Guide/assets/uploads/55.svg
+gifDemo: /ComfyUI-Beginners-Guide/assets/uploads/55.svg
 keywords:
   - 工作流复用
   - 模型切换
   - LoRA 管理
   - 提示词优化
-  - 模板沉淀
-goal: 5 分钟读懂一条陌生工作流，并快速换成自己的模型与提示词
+goal: 积累自己的工作流资源库
 duration: 25 分钟
 difficulty: 进阶
 prerequisites:
   - 已能独立跑通基础文生图工作流
   - 理解节点类型与基本连线规则
 deliverables:
-  - 一份定制后的工作流 JSON 模板
-  - 带工作流元数据的 PNG 成品
+  - ComfyUI诊断提示词
 pitfalls:
   - 忽视模型路径，导致“Model not found”错误
   - 不检查 LoRA 强度，图像风格失控
   - 直接覆盖原作者提示词，失去复现渠道
 ctaButtons:
   - download: false
-    label: test
-    url: https://www.runninghub.cn/workflow/1973235802366980097?source=workspace
+    label: 示例工作流
+    url: https://www.runninghub.cn/post/1974408227439906817/?inviteCode=9fgi9bfg
+  - download: false
+    label: 诊断提示词
+    url: https://ec7s3ezxdu.feishu.cn/wiki/OStYwGF3xi37wwkkIoJcj2dKnSe
 ---
 import GifDemo from "../../components/mdx/GifDemo.astro";
 import StepCard from "../../components/mdx/StepCard.astro";
@@ -34,39 +35,27 @@ import TipCard from "../../components/mdx/TipCard.astro";
 
 ## 章节导言
 
-社区分享的 JSON/PNG 是最高效的学习资料，但想真正变成自己的生产力，需要三步：读懂 → 换掉 → 保存。本章把这些动作拆成可执行的流程，帮你从“复制粘贴”进阶到“吸收整合”。
+社区分享的**工作流**是最高效的学习资料，但想真正变成自己的生产力，需要三步：发现 → 调节 → 诊断。本章把这些动作拆成可执行的流程，帮你从“复制粘贴”进阶到“吸收整合”。
 
-![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193054_297.png)
+## 阶段一：发现并导入工作流
 
-<GifDemo
-  src="/assets/images/workflow-reuse-demo.gif"
-  alt="工作流复用操作演示"
-  caption="导入 → 替换模型 → 更新提示词 → 保存模板"
-  description="动图突出三个关键动作：确认依赖、调整核心节点、输出可复用模板。"
-/>
-
-## 阶段一：导入并建立上下文
-
-https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/v2/cover/KRfCbaAYUoOlNmxgac1cYQcHnBd/?fallback_source=1&height=1280&mount_node_token=MXoMdZlIhoPenwxXniQcvSsjngf&mount_point=docx_image&policy=allow_down&width=1280
-
-<StepCard index={1} title="导入 JSON / PNG" summary="拖放到画布" id="reuse-1">
+<StepCard index={1} title="下载+导入" summary="拖放到画布" id="reuse-1">
   <ol>
-    <li>下载资源区的 <code>workflow-reuse-template.json</code> 或拖入任何社区 PNG。</li>
-    <li>按 <kbd>Ctrl</kbd> + <kbd>A</kbd> 全选，观察画布上的节点分区与命名习惯。</li>
-    <li>在右侧 Node 属性区域浏览作者留下的注释，记录关键节点编号。</li>
+    <li>以runninghub为例，下载你想尝试的工作流 后 拖入画布。</li>
+    <li>注意作者留下的注释，会帮助你理解和掌握新的工作流</li>
   </ol>
 </StepCard>
 
-<TipCard title="第一时间处理缺失模型" tone="warning">
-  <p>如果顶部状态栏提示 <em>Model not found</em>，立刻双击 <code>Checkpoint Loader</code> 选择本地存在的模型。路径不一致是最常见的阻塞点。</p>
-</TipCard>
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_134655_350.png)
+
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_134816_997.png)
 
 ## 阶段二：识别可调节点
 
 <StepCard index={2} title="替换模型与 LoRA" summary="确保风格在可控范围" id="reuse-2">
   <ol>
-    <li>选中 <code>Checkpoint Loader</code>，换成你信赖的基础模型。</li>
-    <li>若包含 <code>LoraLoader</code>，检查是否有对应文件。没有就将强度调为 0 或暂时断开。</li>
+    <li>选中 <code>Checkpoint 或者unet</code>，换成你信赖的基础模型。</li>
+    <li>若包含 <code>Lora加载器</code>，检查是否有对应文件。</li>
     <li>查看 LoRA 的顺序与作用范围，避免和主模型风格冲突。</li>
   </ol>
 </StepCard>
@@ -79,32 +68,82 @@ https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/v2/cov
   </ol>
 </StepCard>
 
-<StepCard index={4} title="检查执行参数" summary="KSampler 决定稳定性" id="reuse-4">
+<StepCard index={4} title="检查执行参数" summary="K采样器决定稳定性" id="reuse-4">
   <ol>
-    <li>确认采样步数、CFG、调度器没有极端值，必要时恢复到 <code>Steps 20 / CFG 7-9</code>。</li>
+    <li>确认采样步数、CFG、调度器没有极端值。</li>
     <li>保留或记录 Seed，便于和作者对比输出差异。</li>
-    <li>检查输出节点是否仍然连接到 <code>Save Image</code>，避免图像只在内存中存在。</li>
+    <li>检查输出节点是否仍然连接到 <code>保存图像</code>，避免图像只在内存中存在。</li>
   </ol>
 </StepCard>
 
-## 阶段三：固化你的模板
+## 阶段三：诊断并解决报错问题
 
-<TipCard title="整理画布结构" tone="info">
-  <p>用 <kbd>G</kbd> 给节点分组，并在分组备注写上“模型资产”“提示词”“后处理”等标签。几周后回到这条工作流依然能快速上手。</p>
-</TipCard>
+使用大语言模型LLM+诊断提示词
 
-<StepCard index={5} title="输出并备份" summary="JSON + PNG 双保险" id="reuse-5">
+<StepCard index={5} title="提问+解决" summary="建议使用Gemini、Chatgpt、Claude" id="reuse-5">
   <ol>
-    <li>运行一次工作流，确认输出符合预期风格。</li>
-    <li>在顶部菜单选择 <em>Save (API format)</em> 导出 JSON。</li>
-    <li>将生成的 PNG 再次拖回 ComfyUI，并点击右侧的 Save 按钮，把工作流嵌入图片元数据。</li>
+    <li>在大语言模型里输入<code>诊断提示词</code>。</li>
+    <li>把报错的<code>工作流</code>和<code>问题描述</code>复制粘贴给大语言模型。</li>
+    <li>询问“什么问题，如何解决”。</li>
   </ol>
 </StepCard>
 
-<TipCard title="推荐动作" tone="success">
-  <p>把常用的模型组合、LoRA 强度和提示词清单写入 README 或 Notion 页面，作为团队共享规范。模板价值在于可复制的决策，而不仅仅是节点连线。</p>
-</TipCard>
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_140726_100.png)
 
-![]()
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_140837_984.png)
 
-![]()
+**大语言模型的回答参考如下：**
+
+80%的情况下，安装说明可以解决（使用Gemini的情况下）
+
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_140900_687.png)
+
+
+**诊断提示词：**
+
+
+```markdown
+# Role: ComfyUI 工作流分析师
+
+## Profile
+- author: LangGPT
+- version: 1.0
+- language: 中文
+- description: 你是一位熟练的 ComfyUI 工作流分析师，擅长分析上传的 JSON 工作流文件，快速识别核心功能、关键插件及参数对效果的影响。
+
+## Skills
+1. 解析 ComfyUI JSON 文件的结构，提取核心工作流信息。
+2. 分析工作流的主要功能模块和目标。
+3. 识别实现这些功能所需的核心插件及其参数。
+4. 评估参数调整对最终效果的潜在影响。
+
+## Background(可选项):
+ComfyUI 是一个基于节点式的 AI 图像生成工具，通过不同的插件组合和参数配置，可以实现多样化的生成效果。了解这些插件和参数的作用，有助于进一步优化和定制工作流。
+
+## Goals(可选项):
+- 明确工作流的核心功能和目标，例如图像合成、风格化或去噪等。
+- 列出实现这些功能的核心插件及其作用。
+- 识别哪些参数在工作流中起到关键作用，并解释这些参数调整对最终结果的影响。
+
+## OutputFormat(可选项):
+- 核心功能: [简洁描述核心功能]
+- 核心插件: [插件列表及简要说明]
+- 关键参数: [参数列表及影响分析]
+- 备注: [可选，补充细节]
+
+## Rules
+1. 输出结果要条理清晰，内容完整。
+2. 不必面面俱到，聚焦“核心”要素：核心功能、核心插件、关键参数及其影响。
+3. 用简洁明了的语言，避免啰嗦或模糊表述。
+4. 使用清晰的分条或表格格式，便于用户理解和后续使用。
+
+## Workflows
+1. 解析上传的 JSON 文件，提取工作流的各个节点和插件信息。
+2. 梳理工作流的整体流程，明确其核心功能和目标。
+3. 提取核心插件及其在工作流中的作用。
+4. 分析关键参数，说明其对生成效果的影响。
+5. 将以上内容整合成清晰的输出格式，供用户参考。
+
+## Init
+欢迎使用提示词生成器！请上传你要分析的 ComfyUI 工作流 JSON 文件，并简要描述你希望深入了解的要点（如: 功能、插件、参数等）。我将帮助你生成最合适的分析提示词，让后续工作更高效！
+```
