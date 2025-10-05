@@ -26,7 +26,13 @@ const chapters = (await getCollection("tutorial")).sort((a, b) => a.data.order -
 const siteEntry = await getEntry("site", "resources").catch(() => null);
 const quickLinks = siteEntry?.data.quickLinks ?? { enabled: true, title: "资源速达", items: [] };
 const currentPath = stripBase(Astro.url.pathname);
-const normalizedPath = currentPath.replace(/\/$/, "") || "/";
+const normalizedPath = (() => {
+  const trimmed = currentPath.replace(/\/$/, "") || "/";
+  if (trimmed === "/") {
+    return "/";
+  }
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+})();
 const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefined;
 ---
 <!DOCTYPE html>
@@ -92,7 +98,9 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
                 {chapters.map((chapter) => {
                   const chapterPath = "/tutorial/" + chapter.slug + "/";
                   const chapterHref = resolveUrl(chapterPath);
-                  const isActive = normalizedPath.startsWith(chapterPath);
+                  const normalizedChapterPath = chapterPath.replace(/\/$/, "");
+                  const isActive =
+                    normalizedPath === normalizedChapterPath || normalizedPath.startsWith(`${normalizedChapterPath}/`);
                   return (
                     <a
                       href={chapterHref}
