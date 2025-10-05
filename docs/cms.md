@@ -31,8 +31,8 @@ px decap-server 只在开发环境使用，生产部署时无需运行。
 要在 GitHub Pages 上使用 /admin/，需要 GitHub OAuth 应用或 Decap CMS 授权服务：
 
 1. 在 GitHub Settings → Developer settings → OAuth Apps 创建新应用：
-   - Homepage URL：https://shaunsonggit.github.io/ComfyUI-Beginners-Guide/
-   - Authorization callback URL：https://shaunsonggit.github.io/ComfyUI-Beginners-Guide/admin/
+   - Homepage URL：https://www.nuash.cn/
+   - Authorization callback URL：https://www.nuash.cn/admin/
 2. 记录生成的 Client ID 与 Client Secret。
 3. 选择一种授权代理：
    - 使用官方开源的 
@@ -53,7 +53,9 @@ etlify-cms-oauth（Node 服务）部署在任意可访问地址。
 | ---- | -------- |
 | 无法登录后台 | 确认 OAuth 应用回调地址与仓库名称填写正确；在本地测试时请运行 
 px decap-server。 |
-| 资源路径错误 | CMS 上传的文件默认放在 public/assets/uploads/，正文引用时使用 ssets/uploads/xxx。 |
+| 资源路径错误 | CMS 上传的文件默认放在 public/assets/uploads/，正文引用时使用 /assets/uploads/xxx。 |
 | 生成的 PR 未自动合并 | 需要仓库维护者手动审查并合并 PR；可结合 GitHub Actions 自动化测试。 |
 
 如需扩展更多集合，请在 public/admin/config.yml 中新增 collections 项，并保证目标目录已经存在。
+
+

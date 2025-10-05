@@ -1,9 +1,9 @@
----
-title: 文生图实战：搭建Qwen-Image基础文生图工作流
-description: 从零开始串联 11 个核心节点，20 分钟完成可复用的文本到图片链路。
+﻿---
+title: 文生图实战：搭建 Qwen-Image 基础文生图工作流
+description: 从零开始串起 11 个核心节点，20 分钟完成可复用的文本到图片链路。
 order: 2
-heroImage: /ComfyUI-Beginners-Guide/assets/uploads/333.svg
-gifDemo: /ComfyUI-Beginners-Guide/assets/uploads/333.svg
+heroImage: /assets/uploads/333.svg
+gifDemo: /assets/uploads/333.svg
 keywords:
   - 文本到图片
   - KSampler
@@ -18,107 +18,105 @@ deliverables:
   - 一条可复用的文生图工作流
 pitfalls:
   - 将 CLIP 输出接错端口导致无法生成
-  - 忘记调整 Empty Latent Image 尺寸与采样步骤
+  - 忘记调整 Empty Latent Image 尺寸与采样步数
   - 生成后未保存 Seed，无法复现效果
 ctaButtons:
   - label: 示例工作流
     url: https://www.runninghub.cn/post/1974408227439906817/?inviteCode=9fgi9bfg
     download: false
 ---
-import AnnotatedImage from "../../components/mdx/AnnotatedImage.astro";
 import GifDemo from "../../components/mdx/GifDemo.astro";
 import StepCard from "../../components/mdx/StepCard.astro";
 import TipCard from "../../components/mdx/TipCard.astro";
 
 ## 章节导言
 
-目标很明确：用最少的节点实现一条稳定、可扩展的文本到图片工作流。这条流水线要做到：随时修改提示词、调整画幅、保存成品，不再依赖别人共享的成品图摸索。
+目标很明确：我们要用最少的节点搭建一条稳定的 Qwen-Image 文生图工作流。完成本章后，你能手动替换提示词、调整分辨率，并将结果保存到本地，而不再依赖别人分享的现成图。
 
-![文生图工作流示例](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193054_297.png "Qwen-Image 文生图工作流")
+<GifDemo
+  src="/assets/uploads/333.svg"
+  alt="文生图工作流动图示意"
+  caption="Qwen-Image 基础工作流节点概览"
+  description="动图演示了提示词、采样器以及 VAE 解码之间的信号流动。"
+/>
 
-<TipCard title="动手前必备检查" tone="info">
+<TipCard title="动手前的 3 项检查" tone="info">
   <ul>
-    <li>确认模型文件夹无中文路径，文件名与 ComfyUI 设置一致。</li>
-    <li>提前写好正向/反向提示词，避免边连线边纠结文案。</li>
-    <li>把输出文件夹清空或备份，方便定位最新成品。</li>
+    <li>模型文件夹不要包含中文路径，文件名需与 ComfyUI 设置一致。</li>
+    <li>提前写好正向/反向提示词，避免边构建边思考文案。</li>
+    <li>准备好输出目录，并确认有足够磁盘空间存放生成图片。</li>
   </ul>
 </TipCard>
 
-## 阶段一：筑好基础积木
+## 阶段一：搭好基础积木
 
-<StepCard index={1} title="加载模型底座" summary="模型加载：UNET、LoRA、CLIP、VAE" id="step-1">
+<StepCard index={1} title="加载模型底座" summary="Checkpoint、LoRA、VAE、CLIP 四件套" id="text2img-1">
   <ol>
-    <li>双击搜索 <code>unet加载器</code>等节点， 并双击添加。</li>
-    <li>分别选择unet、lora、clip、vae配套的模型（例如 <code>qwen_image_fp8_e4m3fn</code>）,</li>
+    <li>添加 <code>Checkpoint Loader</code>，选择你准备好的基础模型。</li>
+    <li>若需要额外风格，在下游接入 <code>LoRA Loader</code> 并设置合适的权重。</li>
+    <li>放置 <code>VAE Loader</code> 与 <code>CLIP Loader</code>，分别输出 <code>VAE</code> 与 <code>CLIP</code> 信号。</li>
   </ol>
 </StepCard>
 
-![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_122119_024.png)
+![模型加载节点示意](/assets/uploads/wechat_2025-10-05_122119_024.png)
 
-<StepCard index={2} title="准备正负提示词" summary="CLIP文本编码器、条件零化" id="step-2">
+<StepCard index={2} title="准备提示词" summary="正向 + 反向共同决定风格" id="text2img-2">
   <ol>
-    <li>添加<code>CLIP文本编码器</code> 节点作为正向提示词。</li>
-    <li>右侧<code>条件</code>接入<code>条件零化</code>节点作为“反向提示词”。</li>
-    <li>将 <code> CLIP加载器</code> 输出接入节点的 <code>clip</code> 端口。</li>
-    <li>
-    输入初始文案：
-      <div className="mt-2 space-y-1 text-xs">
-        <code>Q 版卡通中国古风风格，3D 皮克斯风格 5 岁 Q 版林黛玉（圆脸 + 大眼睛），5 岁 Q 版林黛玉，穿白色的衣服，5 岁 Q 版林黛玉的头跟身体比例 2:1，眼睛跟面部比例 2:1，瀑布飞泻与天空银河呼应，银河繁星闪烁如宝石河，5 岁 Q 版林黛玉站瀑布前，抬头，睁大眼睛，嘴巴微张，露惊叹表情，衣服飘动，融合多色调营造宏大奇幻氛围，突出表情与视觉联系光影，固定中景</code>
-     
-      </div>
-    </li>
+    <li>添加两个 <code>CLIP Text Encode</code> 节点，分别填入正向与负向提示词。</li>
+    <li>确保它们的 <code>clip</code> 输入端来自同一个 <code>CLIP Loader</code>，以便共享词向量空间。</li>
+    <li>常见负向词：<code>blurry</code>、<code>low quality</code>、<code>extra limbs</code>。</li>
   </ol>
 </StepCard>
 
-![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_124132_373.png)
+![提示词节点示意](/assets/uploads/wechat_2025-10-05_124132_373.png)
 
-<StepCard index={3} title="建立潜空间画布" summary="空Latent" id="step-3">
+<StepCard index={3} title="建立潜空间画布" summary="Empty Latent Image 决定分辨率" id="text2img-3">
   <ol>
-    <li>添加 <code>空Latent</code> 节点，设置宽高为 1024 × 1536，作为输出图片的尺寸。</li>
-    <li>保持批次大小为 1，代表单次生成一张图。</li>
-    <li>后续改画幅时只需修改这里的宽高，其他节点无需调整。</li>
+    <li>设置宽高为 1024 × 1536，保持 64 的倍数可避免报错。</li>
+    <li>批次大小设为 1，后续想要批量生成再做扩展。</li>
+    <li>随机种子可暂时留空，后续通过 KSampler 控制。</li>
   </ol>
 </StepCard>
 
-![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_124425_542.png)
+![潜空间节点示意](/assets/uploads/wechat_2025-10-05_124425_542.png)
 
-## 阶段二：闭合生成核心
+## 阶段二：闭合生成环路
 
-至此，`K采样器`前的节点已经设置完毕，接下就是**采样去噪**环节。
-
-<StepCard index={4} title="配置 K采样器" summary="四条输入缺一不可" id="step-4">
+<StepCard index={4} title="配置 KSampler" summary="四条输入缺一不可" id="text2img-4">
   <ol>
-    <li>连线：<code>Unet+LoRA / MODEL串联 → K采样器 / model</code>。（<code>模型采样算法AuraFlow</code>这里不做展开，直接复制就好）</li>
-    <li>连线：正向、反向提示词分别进入 <code>正向条件</code> 与 <code>负向条件</code>。</li>
-    <li>连线：<code>空Latent / LATENT → K采样器 / latent</code>。</li>
-    <li>参数建议：<code>Steps 4</code>、<code>CFG 1</code>、采样器选择 <code>euler</code>
-、调度器选择<code>simple</code>。（注，4步是因为加速LoRA的作用，否则可能需要20-30步）</li>
+    <li>将 <code>MODEL</code>（基础模型 + LoRA）接入 KSampler 的 <code>model</code> 端口。</li>
+    <li>把正向、负向提示词分别接入 <code>positive</code> 与 <code>negative</code>。</li>
+    <li>将 <code>Empty Latent Image</code> 输出的 <code>latent</code> 接到 KSampler。</li>
+    <li>初始参数建议：Steps 20、CFG 7、Sampler = Euler、Scheduler = Simple。</li>
   </ol>
 </StepCard>
 
-![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_130249_357.png)
+![采样器设置示意](/assets/uploads/wechat_2025-10-05_130249_357.png)
 
-<StepCard index={5} title="解码并保存" summary="VAE解码 + 保存图片" id="step-5">
+<StepCard index={5} title="解码并保存" summary="VAE Decode + Save Image" id="text2img-5">
   <ol>
-    <li>添加 <code>VAE解码</code> 与 <code>保存图片</code> 节点。</li>
-    <li>将 <code>K采样器 / LATENT</code> 接到 <code>VAE解码 / latent</code>，再将 <code>VAE加载器</code> 接到 <code>vae</code> 端口。</li>
-    <li>最后把 <code>VAE解码 / 图像</code> 输出连到 <code>保存图像</code> 的输入。</li>
+    <li>添加 <code>VAE Decode</code>，将 KSampler 输出的潜空间连到 <code>latent</code>，VAE Loader 连接到 <code>vae</code>。</li>
+    <li>再添加 <code>Save Image</code>，把解码后的 <code>image</code> 输出接入其中。</li>
+    <li>自定义文件名前缀，例如 <code>qwen_image_</code>，方便管理。</li>
   </ol>
 </StepCard>
 
-![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_130936_692.png)
+![保存节点示意](/assets/uploads/wechat_2025-10-05_130936_692.png)
 
-<TipCard title="快速验证任务流" tone="success">
+<TipCard title="快速验证流程" tone="success">
   <ol>
-    <li>点击右上角 <strong>运行</strong>，确认控制台无红色报错。</li>
-    <li>在 <strong>任务列表</strong> 找到最新图片，检查是否符合预期提示词。</li>
-    <li>想重现图像，记录采样器下方的 Seed 值，下次改为固定模式即可复现。</li>
+    <li>点击运行，确认控制台没有红色报错。</li>
+    <li>打开输出目录，检查生成结果是否符合提示词描述。</li>
+    <li>若需要复现，请记录 KSampler 下方显示的 Seed 值。</li>
   </ol>
 </TipCard>
 
-![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_131524_185.png)
+![运行效果示意](/assets/uploads/wechat_2025-10-05_131524_185.png)
 
-## 阶段三：一套模板，多种玩法
+## 阶段三：扩展与复用
 
-* **调整画幅**：修改 空latent 的宽高，建议保持 64 的倍数避免报错。
-* **锁定风格**：将 K采样器 的随机模式改为 <code>固定</code>，输入固定数值即可复刻。
+- **换提示词**：保留原有节点，只需替换 <code>CLIP Text Encode</code> 中的文本即可重塑画面主题。
+- **换风格**：调整 LoRA 的权重或更换新的 LoRA Loader，同时确保与基础模型匹配。
+- **换尺寸**：修改 <code>Empty Latent Image</code> 的宽高，并同步调整保存路径中备注的分辨率。
+
+完成上述步骤后，你已经拥有一条可复用的文生图流水线。下一章我们将学习如何把社区共享的工作流改造成自己的日常模板。

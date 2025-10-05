@@ -60,7 +60,7 @@ pnpm install
    ```bash
    pnpm dev
    ```
-   浏览器访问 `http://localhost:4321/ComfyUI-Beginners-Guide/`。
+   浏览器访问 `http://localhost:4321/`。
 
 2. 编辑内容：
    - 章节正文：`src/content/tutorial/*.mdx`
@@ -69,14 +69,14 @@ pnpm install
 
 3. 实时热更新：保存文件即可在浏览器看到更新结果。
 
-> 项目在 `astro.config.mjs` 中设置了 `base: "/ComfyUI-Beginners-Guide/"`。无论开发还是部署，站点都挂在该子路径下。
+> 项目在 `astro.config.mjs` 中设置了站点地址 `https://www.nuash.cn`，开发与部署都以根路径提供资源。
 
 ---
 
 ## 部署发布
 
 1. **GitHub Actions（推荐）**：仓库内含 `.github/workflows/deploy.yml`，推送到 `main` 时自动构建并部署到 GitHub Pages。
-2. **线上地址**：`https://shaunsonggit.github.io/ComfyUI-Beginners-Guide/`
+2. **线上地址**：`https://www.nuash.cn`
 3. **手动构建**：
    ```bash
    pnpm build
@@ -94,9 +94,9 @@ pnpm install
 - **本地开发**：
   1. `pnpm dev` 启动页面；
   2. 另开终端运行 `npx decap-server`；
-  3. 访问 `http://localhost:4321/ComfyUI-Beginners-Guide/admin/`，使用 GitHub 账号登录。
+  3. 访问 `http://localhost:4321/admin/`，使用 GitHub 账号登录。
 
-- **线上环境**：访问 `https://shaunsonggit.github.io/ComfyUI-Beginners-Guide/admin/`，使用 GitHub OAuth 登录。需预先配置 OAuth 应用并部署授权代理。
+- **线上环境**：访问 `https://www.nuash.cn/admin/`，使用 GitHub OAuth 登录。需预先配置 OAuth 应用并部署授权代理。
 
 ### 章节内容编辑
 
@@ -111,14 +111,14 @@ pnpm install
 
 ### 图片与视频素材
 
-- 上传文件默认放在 `public/assets/uploads/`，CMS 会生成 `/ComfyUI-Beginners-Guide/assets/uploads/...` 路径。
+- 上传文件默认放在 `public/assets/uploads/`，CMS 会生成 `/assets/uploads/...` 路径。
 - 正文中插入图片：
   ```markdown
-  ![描述文案](/ComfyUI-Beginners-Guide/assets/uploads/example.jpg)
+  ![描述文案](/assets/uploads/example.jpg)
   ```
 - 插入视频：
   ```html
-  <video src="/ComfyUI-Beginners-Guide/assets/uploads/demo.mp4" controls playsInline />
+  <video src="/assets/uploads/demo.mp4" controls playsInline />
   ```
   或者嵌入外部 iframe（B 站 / YouTube）。
 
@@ -132,7 +132,7 @@ pnpm install
    - **下载文件？**：勾选后前端 `<a>` 会带 `download` 属性，实现直接下载。
 3. 若不添加按钮，页面只保留默认的 “阅读完整章节”。
 
-> 注意：链接不要写 `public/...`，路径以站点根 `/ComfyUI-Beginners-Guide/` 为准。
+> 注意：链接不要写 `public/...`，路径以站点根 `/assets/...` 为准。
 
 ---
 
@@ -153,7 +153,7 @@ pnpm install
 
 | 症状 | 可能原因 | 解决办法 |
 | ---- | -------- | -------- |
-| 首页图片 404 | 链接缺少 `/ComfyUI-Beginners-Guide/` 前缀，或误写 `public/...` | 在 CMS 内重新选择图片，确保路径形如 `/ComfyUI-Beginners-Guide/assets/...` |
+| 首页图片 404 | 链接误写 `public/...` 或路径不以 `/assets/` 开头 | 在 CMS 内重新选择图片，确保路径形如 `/assets/...` |
 | CMS 登录失败 | 本地未运行 `npx decap-server`，或 OAuth 未配置 | 本地启动代理；线上确认 GitHub OAuth 配置、回调地址 |
 | 新增章节未显示 | 草稿未发布或页面缓存未刷新 | 在 CMS 中点击 “Publish”，刷新首页 |
 | 子页面 404 | URL 未带结尾 `/` | 项目设置 `trailingSlash: "always"`，务必访问 `/tutorial/slug/` |

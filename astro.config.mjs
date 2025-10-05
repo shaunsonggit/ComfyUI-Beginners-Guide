@@ -3,8 +3,7 @@ import mdx from "@astrojs/mdx";
 import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
-  site: "https://shaunsonggit.github.io",
-  base: "/ComfyUI-Beginners-Guide/",
+  site: "https://www.nuash.cn",
   trailingSlash: "always",
   integrations: [
     tailwind({

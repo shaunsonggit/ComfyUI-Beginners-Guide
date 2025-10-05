@@ -10,7 +10,7 @@
     uploadMedia: "chore(cms): upload media"
     deleteMedia: "chore(cms): delete media"
 media_folder: public/assets/uploads
-public_folder: /ComfyUI-Beginners-Guide/assets/uploads
+public_folder: /assets/uploads
 publish_mode: editorial_workflow
 local_backend: true
 slug:
