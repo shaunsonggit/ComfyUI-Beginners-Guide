@@ -1,16 +1,14 @@
 ---
-title: 文生图实战：搭建最常用的文本到图片工作流
-description: 从零开始串联 7 个核心节点，5 分钟完成可复用的文本到图片链路。
+title: 文生图实战：搭建Qwen-Image基础文生图工作流
+description: 从零开始串联 11个核心节点，20 分钟完成可复用的文本到图片链路。
 order: 2
-heroImage: /ComfyUI-Beginners-Guide/assets/uploads/workflow-outline.svg
-gifDemo: /assets/images/text-to-image-demo.gif
+heroImage: /ComfyUI-Beginners-Guide/assets/uploads/333.svg
+gifDemo: /ComfyUI-Beginners-Guide/assets/uploads/333.svg
 keywords:
-  - 文本到图片
+  - 文生图
   - KSampler
-  - 提示词编排
-  - VAE 解码
   - 工作流模板
-goal: 独立搭建最小可用的文生图工作流，并理解每个节点的职责
+goal: 独立搭建最小可用的文生图工作流
 duration: 20 分钟
 difficulty: 初阶
 prerequisites:
@@ -18,11 +16,14 @@ prerequisites:
   - 熟悉 ComfyUI 的节点添加与连线操作
 deliverables:
   - 一条可复用的文生图 JSON 工作流
-  - 不同提示词与模型切换的操作清单
 pitfalls:
   - 将 CLIP 输出接错端口导致无图可出
   - 忘记调整 Empty Latent Image 尺寸与采样步数
   - 生成后未保存 Seed，无法复现效果
+ctaButtons:
+  - download: false
+    label: 示例工作流
+    url: https://www.runninghub.cn/post/1974408227439906817/?inviteCode=9fgi9bfg
 ---
 
 import AnnotatedImage from "../../components/mdx/AnnotatedImage.astro";

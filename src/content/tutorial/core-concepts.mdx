@@ -48,14 +48,14 @@ import TipCard from "../../components/mdx/TipCard.astro";
   1. 节点类型1：Model（unet加载器）、VAE、Clip分别加载
   2. 节点类型2：Model、VAE、Clip合在一个Checkpoint加载器里；**有的模型带有clip和vae就用checkpoint，没有的话用类型1里的方式分别加载**
   3. LoRA模型：（Low-Rank Adaptation，低秩适应）是一种高效的模型微调技术，简单理解为在基座模型的基础上加了一层滤镜，为模型增添新概念、角色或画风，或者提速等。**LoRA模型一般都是对应某一个基座模型，不同基座模型的LoRA不能通用。**
-* ![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193507_757.png)
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193507_757.png)
 * **数据类**：<code>LATENT</code>、<code>CONDITIONING</code>、<code>IMAGE</code> 分别表示潜空间、文字特征与最终像素。
 
   * **提示词**的注入在这个部分完成
-* ![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193214_647.png)
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193214_647.png)
 * **行为类**：例如 <code>K采样器</code>、<code>保存图片</code>，没有输出端口但会触发执行并写入文件。
 
- ![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193629_492.png)
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193629_492.png)
   * K采样器是处理的中枢，相当于大脑，把输入的信息处理（去除噪点）生成图像
 
     * 魔法数字 (随机种)：画的身份证号，同样号码画出同样的画。
