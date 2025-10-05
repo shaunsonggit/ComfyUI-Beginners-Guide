@@ -1,9 +1,17 @@
 ﻿---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import { withBase } from "../utils/paths";
 
-const chapters = (await getCollection("tutorial")).sort((a, b) => a.data.order - b.data.order);
+const chapters = (await getCollection("tutorial"))
+  .sort((a, b) => a.data.order - b.data.order);
+const siteEntry = await getEntry("site", "resources").catch(() => null);
+const downloadsConfig = siteEntry?.data.downloads ?? {
+  enabled: true,
+  title: "配套资源下载",
+  description: "所有示例工作流均经过实机验证，可直接导入 ComfyUI。",
+  items: []
+};
 const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefined;
 
 const firstChapter = chapters[0];
@@ -17,7 +25,7 @@ const secondaryCtaAnchor = firstChapter ? `#${firstChapter.slug}` : "#downloads"
       <p class="text-sm uppercase tracking-[0.35em] text-primary">ComfyUI 快速上手</p>
       <h1 class="text-4xl font-bold sm:text-5xl">从核心概念到常用工作流，15 分钟建立你的 ComfyUI 直觉</h1>
       <p class="text-lg text-slate-600 dark:text-slate-300">
-        本教程专注于最常用、最实用的 ComfyUI 工作流。现在章节来自 CMS，新增内容会自动出现在这里，让你逐个突破常见场景。
+        本教程专注于最常用、实用的 ComfyUI 工作流。章节内容来自 CMS，新增教程会自动出现在首页，帮助你逐个掌握常见场景。
       </p>
       <div class="flex flex-wrap gap-3 text-sm">
         <a class="rounded-md bg-primary px-4 py-2 font-semibold text-white shadow-lg shadow-primary/30 transition hover:bg-primary-dark" href={primaryCtaAnchor}>直接开始动手</a>
@@ -29,7 +37,6 @@ const secondaryCtaAnchor = firstChapter ? `#${firstChapter.slug}` : "#downloads"
   {chapters.map((chapter, index) => {
     const orderNumber = chapter.data.order ?? index + 1;
     const displayNumber = orderNumber.toString().padStart(2, "0");
-    const sectionId = chapter.slug;
     const mediaSrc = chapter.data.gifDemo ?? chapter.data.heroImage;
     const mediaAlt = chapter.data.gifDemo ? `${chapter.data.title} 动图演示` : `${chapter.data.title} 示意图`;
     const keywords = chapter.data.keywords ?? [];
@@ -41,7 +48,7 @@ const secondaryCtaAnchor = firstChapter ? `#${firstChapter.slug}` : "#downloads"
     ];
 
     return (
-      <section id={sectionId} class={`space-y-6 ${index === 0 ? "mt-16" : "mt-24"}`}>
+      <section id={chapter.slug} data-chapter-id={chapter.slug} class={`space-y-6 ${index === 0 ? "mt-16" : "mt-24"}`}>
         <header class="flex flex-col gap-2">
           <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">章节 {displayNumber}</p>
           <h2 class="text-3xl font-bold">{chapter.data.title}</h2>
@@ -117,12 +124,28 @@ const secondaryCtaAnchor = firstChapter ? `#${firstChapter.slug}` : "#downloads"
     );
   })}
 
-  <section id="downloads" class="mt-24 rounded-3xl border border-primary/30 bg-primary/5 p-10 shadow-lg dark:border-primary/40 dark:bg-primary/10">
-    <h2 class="text-2xl font-bold">配套资源下载</h2>
-    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">所有示例工作流均经过实机验证，可直接导入 ComfyUI。</p>
-    <ul class="mt-6 space-y-3 text-sm">
-      <li><a class="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 font-semibold text-primary shadow-sm ring-1 ring-primary/30 transition hover:bg-primary/10 dark:bg-slate-900" href={resolveUrl("assets/workflows/text-to-image-basic.json")} download>基础文生图工作流 JSON</a></li>
-      <li><a class="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 font-semibold text-primary shadow-sm ring-1 ring-primary/30 transition hover:bg-primary/10 dark:bg-slate-900" href={resolveUrl("assets/workflows/workflow-reuse-template.json")} download>工作流复用模板 JSON</a></li>
-    </ul>
-  </section>
+  {downloadsConfig.enabled && downloadsConfig.items.length > 0 && (
+    <section id="downloads" data-chapter-id="downloads" class="mt-24 space-y-4 rounded-3xl border border-primary/30 bg-primary/5 p-10 shadow-lg dark:border-primary/40 dark:bg-primary/10">
+      <div>
+        <h2 class="text-2xl font-bold">{downloadsConfig.title}</h2>
+        {downloadsConfig.description && (
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{downloadsConfig.description}</p>
+        )}
+      </div>
+      <ul class="mt-2 space-y-3 text-sm">
+        {downloadsConfig.items.map((item) => (
+          <li>
+            <a
+              class="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 font-semibold text-primary shadow-sm ring-1 ring-primary/30 transition hover:bg-primary/10 dark:bg-slate-900"
+              href={resolveUrl(item.url)}
+              download={item.download ? "" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </BaseLayout>
+

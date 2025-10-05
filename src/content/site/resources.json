@@ -1,0 +1,37 @@
+{
+  "quickLinks": {
+    "enabled": false,
+    "title": "资源速达",
+    "items": [
+      {
+        "label": "下载示例工作流",
+        "url": "#downloads",
+        "external": false,
+        "icon": ""
+      },
+      {
+        "label": "GitHub 改进计划",
+        "url": "https://github.com/",
+        "external": true,
+        "icon": ""
+      }
+    ]
+  },
+  "downloads": {
+    "enabled": true,
+    "title": "配套资源",
+    "description": "教程对应的【配套工作流】和【工作流诊断工具】",
+    "items": [
+      {
+        "label": "配套工作流",
+        "url": "https://www.runninghub.cn/post/1974408227439906817/?inviteCode=9fgi9bfg",
+        "download": false
+      },
+      {
+        "label": "诊断工具",
+        "url": "https://ec7s3ezxdu.feishu.cn/wiki/OStYwGF3xi37wwkkIoJcj2dKnSe",
+        "download": false
+      }
+    ]
+  }
+}

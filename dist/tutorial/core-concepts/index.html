@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" class="scroll-smooth"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>核心概念：用积木理解 ComfyUI | ComfyUI小白入门</title><meta name="description" content="把节点、工作流、Checkpoint、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。"><script>
+<!DOCTYPE html><html lang="zh-CN" class="scroll-smooth"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>核心概念：用搭积木的方式理解 ComfyUI | ComfyUI小白入门</title><meta name="description" content="把节点、工作流、模型加载、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。"><script>
       (function () {
         const storageKey = "comfyui-guide-theme";
         const root = document.documentElement;
@@ -17,7 +17,7 @@
         root.classList.add(mode);
         root.style.colorScheme = mode;
       })();
-    </script><link rel="stylesheet" href="/ComfyUI-Beginners-Guide/_astro/index.d-FaaCAl.css"></head> <body class="min-h-screen bg-surface-light text-slate-900 transition-colors dark:bg-surface-dark dark:text-slate-100"> <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-primary">
+    </script><link rel="stylesheet" href="/ComfyUI-Beginners-Guide/_astro/index.GwYUgbbb.css"></head> <body class="min-h-screen bg-surface-light text-slate-900 transition-colors dark:bg-surface-dark dark:text-slate-100"> <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-primary">
 跳到主要内容
 </a> <header class="sticky top-0 z-40 border-b border-slate-200 bg-surface-light/95 backdrop-blur dark:border-slate-700 dark:bg-surface-dark/90"> <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"> <a href="/ComfyUI-Beginners-Guide/" class="text-lg font-semibold text-primary transition hover:text-primary-light">ComfyUI小白入门</a> <nav class="flex items-center gap-4 text-sm font-medium"> <ul class="hidden items-center gap-4 sm:flex"> <li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/ComfyUI-Beginners-Guide/#concepts"> 核心概念 </a> </li><li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/ComfyUI-Beginners-Guide/#text-to-image"> 文生图实战 </a> </li><li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/ComfyUI-Beginners-Guide/#workflow-reuse"> 工作流复用 </a> </li><li> <a class="rounded-md px-2 py-1 text-slate-600 transition hover:bg-primary/10 hover:text-primary dark:text-slate-300" href="/ComfyUI-Beginners-Guide/#downloads"> 资源下载 </a> </li> </ul> <button id="theme-toggle" type="button" class="flex items-center gap-2 rounded-full border border-slate-300 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/60 dark:border-slate-600 dark:bg-slate-800/70 dark:text-slate-200" aria-label="切换亮暗主题"> <span aria-hidden="true" class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-primary/20"> <svg class="h-4 w-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.6"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m5.196 1.804-1.414 1.414M21 12h-2m-1.804 5.196-1.414-1.414M12 21v-2m-5.196-1.804 1.414-1.414M3 12h2m1.804-5.196 1.414 1.414M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path> </svg> </span> <span class="hidden sm:inline">切换主题</span> </button> <script>
   (function () {
@@ -69,43 +69,118 @@
     mobileNav?.querySelectorAll("a").forEach((anchor) =>
       anchor.addEventListener("click", () => mobileNav.removeAttribute("open"))
     );
-  </script> </nav> </div> </header> <main id="main" class="mx-auto w-full max-w-6xl px-6 py-12"> <div class="grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)]"> <aside class="hidden lg:flex lg:flex-col lg:justify-between lg:border-r lg:border-slate-200 lg:pr-8 dark:lg:border-slate-700"> <div> <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">学习目录</p> <nav class="mt-4 space-y-1 text-sm"> <a href="/ComfyUI-Beginners-Guide/" class="block rounded-lg px-3 py-2 transition text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+  </script> </nav> </div> </header> <main id="main" class="mx-auto w-full max-w-6xl px-6 py-12"> <div class="grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)]"> <aside class="hidden lg:flex lg:flex-col lg:gap-10 lg:sticky lg:top-28 lg:h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-8 lg:border-r lg:border-slate-200 dark:lg:border-slate-700" data-scroll-spy> <div> <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">学习目录</p> <nav class="mt-4 space-y-1 text-sm"> <a href="/ComfyUI-Beginners-Guide/" class="sidebar-link" data-chapter-link="__home" data-active="false">
 站点概览
-</a> <a href="/ComfyUI-Beginners-Guide/tutorial/core-concepts/" class="block rounded-lg px-3 py-2 transition text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"> 核心概念：用积木理解 ComfyUI </a><a href="/ComfyUI-Beginners-Guide/tutorial/text-to-image/" class="block rounded-lg px-3 py-2 transition text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"> 文生图实战：搭建最常用的文本到图片工作流 </a><a href="/ComfyUI-Beginners-Guide/tutorial/workflow-reuse/" class="block rounded-lg px-3 py-2 transition text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"> 工作流复用：加载社区文件并改成自己的常用模板 </a><a href="/ComfyUI-Beginners-Guide/tutorial/5555/" class="block rounded-lg px-3 py-2 transition text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"> 55555 </a> </nav> </div> <div class="mt-10 rounded-xl border border-primary/25 bg-primary/5 p-4 text-xs text-slate-600 shadow-sm dark:border-primary/40 dark:bg-primary/10 dark:text-slate-200"> <p class="font-semibold text-primary">资源速达</p> <ul class="mt-3 space-y-2"> <li> <a class="flex items-center justify-between rounded-lg px-3 py-2 hover:text-primary" href="#downloads">
-下载示例工作流
-<span aria-hidden="true">→</span> </a> </li> <li> <a class="flex items-center justify-between rounded-lg px-3 py-2 hover:text-primary" href="https://github.com/" rel="noreferrer">
-GitHub 改进计划
-<span aria-hidden="true">↗</span> </a> </li> </ul> </div> </aside> <div class="space-y-8">   <article class="prose prose-lg mx-auto max-w-3xl"> <header class="mb-8 space-y-3 text-center"> <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">ComfyUI 核心教程</p> <h1 class="text-4xl font-bold">核心概念：用积木理解 ComfyUI</h1> <p class="text-slate-600 dark:text-slate-300">把节点、工作流、Checkpoint、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。</p> <img src="/ComfyUI-Beginners-Guide/assets/uploads/core-concepts-map.svg" alt="核心概念：用积木理解 ComfyUI 章节示意图" class="mx-auto rounded-xl shadow-lg" loading="lazy"> </header> <h2 id="章节导言">章节导言</h2>
-<p>一条稳固的工作流始于正确的认知框架。本节不上来就告诉你“怎么连”，而是拆解“为什么这样连”。把 ComfyUI 想象成一盒功能积木：节点决定能力，连线决定顺序，模型资产决定结果风格。只要理解这些角色的协作逻辑，后续任何复杂工作流都是模块重组而已。</p>
-<figure class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900"> <img src="/ComfyUI-Beginners-Guide/assets/images/core-concepts-map.svg" alt="ComfyUI 核心概念导图" loading="lazy" class="w-full object-cover"> <div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:8%;top:14%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 1 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">节点</p> <p class="mt-1 leading-tight">每一个节点都是独立的功能单位，负责完成一件具体工作。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:38%;top:14%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 2 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">工作流</p> <p class="mt-1 leading-tight">节点通过连线形成执行顺序，线条表示数据的流动方向。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:68%;top:14%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 3 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">Checkpoint</p> <p class="mt-1 leading-tight">大模型像画风底座，决定整体输出方向。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:22%;top:46%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 4 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">LoRA</p> <p class="mt-1 leading-tight">附加风格插件，叠加在模型之上细调人物、质感与构图。</p> </div> </div><div class="pointer-events-none absolute rounded-md border-2 border-red-500/90 bg-red-500/10 shadow-highlight" style="left:52%;top:46%;width:24%;height:24%"> <div class="absolute -left-3 -top-3 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"> 5 </div> <div class="absolute left-full top-0 ml-3 w-48 rounded-md border border-red-500/40 bg-surface-light/95 p-3 text-xs text-slate-700 shadow-md dark:bg-slate-900/95 dark:text-slate-200"> <p class="font-semibold text-red-500">VAE</p> <p class="mt-1 leading-tight">负责把潜空间解码为真正的 RGB 像素。</p> </div> </div> <figcaption class="border-t border-slate-200 bg-muted-light px-4 py-3 text-sm text-slate-600 dark:border-slate-700 dark:bg-muted-dark dark:text-slate-300">五大构件沿着“输入→运算→输出”的链路排布，每个模块只承担单一职责</figcaption> </figure>
-<h2 id="记住这五句心法">记住这五句心法</h2>
-<ol>
-<li><strong>节点 Node</strong>：一件事、一个输入输出约定，毫不含糊。</li>
-<li><strong>工作流 Workflow</strong>：有向图写成的操作剧本，线条表示数据流动方向。</li>
-<li><strong>Checkpoint</strong>：画风基底，换了它等于换了整个画面语言。</li>
-<li><strong>LoRA</strong>：风格叠加器，覆盖在模型之上细调人物、质感与构图。</li>
-<li><strong>VAE</strong>：色彩翻译官，不解码就看不到真正的成品。</li>
-</ol>
-<div class="rounded-xl border border-primary/40 bg-primary/5 text-primary px-5 py-4 text-sm shadow-sm" role="note"> <p class="text-sm font-semibold"> 端口类型必须一一匹配 </p> <div class="mt-2 space-y-3 text-slate-600 dark:text-slate-300"> <p>ComfyUI 不会阻止你乱连线，但它会在执行时报错。辨认端口旁的标签，例如 <code>MODEL</code>、<code>CONDITIONING</code>，只有类型一致才能传输数据。悬停时的高亮提示就是系统在告诉你“这里能插”。</p> </div> </div>
-<h2 id="节点家族的三种输出">节点家族的三种输出</h2>
-<p><img src="/ComfyUI-Beginners-Guide/public/assets/uploads/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20250929165502_3397_133.png" alt="描述文案"/></p>
-<p>public/assets/uploads/微信图片_20250929165502_3397_133.png</p>
+</a> <a href="/ComfyUI-Beginners-Guide/tutorial/core-concepts/" class="sidebar-link" data-chapter-link="core-concepts" data-active="false"> 核心概念：用搭积木的方式理解 ComfyUI </a><a href="/ComfyUI-Beginners-Guide/tutorial/text-to-image/" class="sidebar-link" data-chapter-link="text-to-image" data-active="false"> 文生图实战：搭建Qwen-Image基础文生图工作流 </a><a href="/ComfyUI-Beginners-Guide/tutorial/workflow-reuse/" class="sidebar-link" data-chapter-link="workflow-reuse" data-active="false"> 工作流复用：加载社区文件并改成自己的常用模板 </a> </nav> </div>  </aside> <div class="space-y-8">   <article class="prose prose-lg mx-auto max-w-3xl"> <header class="mb-8 space-y-3 text-center"> <p class="text-xs font-semibold uppercase tracking-[0.3em] text-primary">ComfyUI 核心教程</p> <h1 class="text-4xl font-bold">核心概念：用搭积木的方式理解 ComfyUI</h1> <p class="text-slate-600 dark:text-slate-300">把节点、工作流、模型加载、LoRA、VAE 看成可拼接的功能积木，建立清晰的心智模型。</p> <img src="/ComfyUI-Beginners-Guide/assets/uploads/1.svg" alt="核心概念：用搭积木的方式理解 ComfyUI 章节示意图" class="mx-auto rounded-xl shadow-lg" loading="lazy"> </header> <h2 id="节点导言">节点导言</h2>
+<p>一条稳定的工作流始于正确的认知框架。本章不直接告诉你“怎么连”，而是拆解“为什么这样连”。把 ComfyUI 想象成一盒功能积木：节点决定能力，连线决定顺序，模型资产决定结果风格。理解这些角色的协作逻辑，后续任何复杂 workflow 都只是模块重组而已。</p>
+<p><img src="/ComfyUI-Beginners-Guide/assets/uploads/2.svg" alt=""/></p>
+<h2 id="工作流例图">工作流例图</h2>
+<p><img src="/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193054_297.png" alt=""/></p>
+<div class="rounded-xl border border-primary/40 bg-primary/5 text-primary px-5 py-4 text-sm shadow-sm" role="note"> <p class="text-sm font-semibold"> 端口类型必须一一匹配 </p> <div class="mt-2 space-y-3 text-slate-600 dark:text-slate-300"> <p>ComfyUI 不会阻止你连线，但在执行时会报错。注意端口上的标签，例如 <code>MODEL</code>、<code>CONDITIONING</code>，只有类型一致才能传递数据。提示框出现红色就表示端口类型不兼容。</p> </div> </div>
+<h2 id="节点输出的三种分类">节点输出的三种分类</h2>
 <ul>
-<li><strong>数据类</strong>：LATENT、CONDITIONING、IMAGE 分别代表潜空间、文本特征与最终像素。</li>
-<li><strong>控制类</strong>：MODEL、VAE、CLIP 属于权重或编码器引用，告诉下游该用哪份模型。</li>
-<li><strong>行为类</strong>：例如 SaveImage，没有输出端口但会触发文件写入。</li>
-</ul>
-<p>掌握这些分类后，你会知道“这一条线送出去的到底是什么”，也能避免错把控制信号当作可见图像。</p>
-<h2 id="两条不容忽视的连接规则">两条不容忽视的连接规则</h2>
+<li>
+<p><strong>控制类</strong>：<code>MODEL</code>、<code>VAE</code>、<code>CLIP</code> 属于权重或编码器，说明这条线在告诉下游“使用哪种模型”。</p>
 <ol>
-<li><strong>采样必备闭环</strong>：Checkpoint Loader 给出的 MODEL 与 CLIP 必须同时进入 KSampler，再配上 Empty Latent Image，缺一不可。</li>
-<li><strong>所有图片都要过 VAE</strong>：只要想输出 PNG/JPEG，就得让潜空间走一趟 VAEDecode，否则只能得到一堆噪声矩阵。</li>
+<li>节点类型1：Model（unet加载器）、VAE、Clip分别加载</li>
+<li>节点类型2：Model、VAE、Clip合在一个Checkpoint加载器里；<strong>有的模型带有clip和vae就用checkpoint，没有的话用类型1里的方式分别加载</strong></li>
+<li>LoRA模型：（Low-Rank Adaptation，低秩适应）是一种高效的模型微调技术，简单理解为在基座模型的基础上加了一层滤镜，为模型增添新概念、角色或画风，或者提速等。<strong>LoRA模型一般都是对应某一个基座模型，不同基座模型的LoRA不能通用。</strong>
+<img src="/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193507_757.png" alt=""/></li>
 </ol>
-<div class="rounded-xl border border-amber-400/60 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200 px-5 py-4 text-sm shadow-sm" role="note"> <p class="text-sm font-semibold"> 最常见的连线错误 </p> <div class="mt-2 space-y-3 text-slate-600 dark:text-slate-300"> <p>新手经常遗漏 Empty Latent Image 或忘记把 VAE 接回 VAEDecode，导致生成阶段直接报 <em>missing input</em>。保持“采样闭环 + 解码闭环”的意识，任何工作流都跑得通。</p> </div> </div>
-<h2 id="评估一个工作流是否值得复用">评估一个工作流是否值得复用</h2>
+</li>
+<li>
+<p><strong>数据类</strong>：<code>LATENT</code>、<code>CONDITIONING</code>、<code>IMAGE</code> 分别表示潜空间、文字特征与最终像素。</p>
 <ul>
-<li><strong>节点是否为原生</strong>：只要没有出现 Script/Custom 节点，大概率无需额外安装插件。</li>
-<li><strong>模型路径是否可用</strong>：留意作者的路径是否和你相同，不存在就换成自己的模型文件名。</li>
-<li><strong>参数是否合理</strong>：像采样步数、CFG、噪声调度器都写在 KSampler 里。换模型时记得同步检查这些值。</li>
+<li><strong>提示词</strong>的注入在这个部分完成
+<img src="/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193214_647.png" alt=""/></li>
 </ul>
-<p>具备这份概念地图后，再看社区分享的复杂工作流，你能迅速判断“哪些节点是拿来就用，哪些节点必须替换”。这就是建立产品直觉的第一步。</p> <footer class="mt-12 rounded-xl border border-primary/30 bg-primary/5 p-6 text-sm shadow-sm dark:border-primary/40 dark:bg-primary/10"> <p class="font-semibold text-primary">配套资源</p> <ul class="mt-3 space-y-2"> <li><a class="text-primary hover:underline" href="/ComfyUI-Beginners-Guide/assets/workflows/text-to-image-basic.json" download>基础文生图工作流</a></li> <li><a class="text-primary hover:underline" href="/ComfyUI-Beginners-Guide/assets/workflows/workflow-reuse-template.json" download>工作流复用模板</a></li> </ul> </footer> </article>  </div> </div> </main> <footer class="border-t border-slate-200 bg-muted-light py-8 text-sm text-slate-500 dark:border-slate-700 dark:bg-muted-dark dark:text-slate-400"> <div class="mx-auto flex max-w-6xl flex-col gap-2 px-6 sm:flex-row sm:items-center sm:justify-between"> <p>&copy; 2025 ComfyUI小白入门 · 保持好奇，持续打磨工作流。</p> <p> <a class="hover:text-primary" href="https://github.com/" rel="noreferrer">贡献与反馈</a> </p> </div> </footer> </body></html>
+</li>
+<li>
+<p><strong>行为类</strong>：例如 <code>K采样器</code>、<code>保存图片</code>，没有输出端口但会触发执行并写入文件。</p>
+</li>
+</ul>
+<p><img src="/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-04_193629_492.png" alt=""/></p>
+<ul>
+<li>
+<p>K采样器是处理的中枢，相当于大脑，把输入的信息处理（去除噪点）生成图像</p>
+<ul>
+<li>魔法数字 (随机种)：画的身份证号，同样号码画出同样的画。</li>
+<li>画完之后 (运行后操作)：画完一张后，要不要自动换个新号码。</li>
+<li>思考步数 (步数)：画画机把画变清楚，总共思考了多少次。</li>
+<li>听话程度 (CFG)：数字越大，画画机就越严格听你的话。</li>
+<li>画画方法 (采样器)：它选择用哪一种笔刷来画画。</li>
+<li>画画节奏 (调度器)：控制画画机每一步下笔的轻重和快慢。</li>
+<li>创新程度 (降噪)：1.0代表在一张全新的白纸上开始画。0.1代表整体不变，仅修改小细节。</li>
+<li>思考步数 (步数)：画画机把画变清楚，总共思考了多少次。</li>
+</ul>
+</li>
+<li>
+<p>掌握分类后，你就能看懂一条工作流究竟在做什么，也能避免把控制信号误当成图像数据。</p>
+</li>
+</ul>
+<h2 id="两条最容易忽视的连线规则">两条最容易忽视的连线规则</h2>
+<ol>
+<li><strong>采样器需要完整环路</strong>：<code>Checkpoint Loader</code> 输出的 <code>MODEL</code> 与 <code>CLIP</code> 必须同时进入 <code>KSampler</code>，再搭配 <code>Empty Latent Image</code>，缺一不可。</li>
+<li><strong>所有图片都要经过 VAE</strong>：只想输出 PNG/JPEG，就要让潜空间经过一次 <code>VAEDecode</code>，否则只能得到一张灰度噪点图。</li>
+</ol>
+<div class="rounded-xl border border-amber-400/60 bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-200 px-5 py-4 text-sm shadow-sm" role="note"> <p class="text-sm font-semibold"> 最常见的连线报错 </p> <div class="mt-2 space-y-3 text-slate-600 dark:text-slate-300"> <p>初学者容易漏掉 <code>Empty Latent Image</code>，或者把 <code>VAE</code> 接回 <code>VAEDecode</code>，导致执行阶段直接报 <em>missing input</em>。牢记“采样器环路 + 解码环路”这句口诀，工作流就能畅通。</p> </div> </div>
+<h2 id="如何判断一个工作流是否值得复用">如何判断一个工作流是否值得复用</h2>
+<ul>
+<li><strong>节点是否为原生</strong>：只要没有出现 Script/Custom 节点，通常无需额外安装插件。</li>
+<li><strong>模型路径是否可用</strong>：注意作者的路径是否与你一致，若不同要改成自己的模型文件。</li>
+<li><strong>参数是否合理</strong>：如采样步数、CFG、分辨率等都写在 <code>KSampler</code> 里，换模型时别忘了同步检查。</li>
+</ul>
+<p>把这章当作快速通关指南：看懂结构后，再去学习带标注的复用工作流，你能瞬间判断“哪些节点是装饰，哪些节点必须替换”。这正是建立 ComfyUI 直觉的第一步。</p> <footer class="mt-12 space-y-3 rounded-xl border border-primary/30 bg-primary/5 p-6 text-sm shadow-sm dark:border-primary/40 dark:bg-primary/10"> <div> <p class="font-semibold text-primary">配套资源下载</p> <p class="mt-1 text-slate-600 dark:text-slate-300">所有示例工作流均经过实机验证，可直接导入 ComfyUI。</p> </div> <ul class="space-y-2"> <li> <a class="text-primary hover:underline" href="https://www.runninghub.cn/post/1974408227439906817/?inviteCode=9fgi9bfg"> xxxx </a> </li><li> <a class="text-primary hover:underline" href="https://ec7s3ezxdu.feishu.cn/wiki/OStYwGF3xi37wwkkIoJcj2dKnSe"> 诊断提示词 </a> </li> </ul> </footer> </article>  </div> </div> </main> <footer class="border-t border-slate-200 bg-muted-light py-8 text-sm text-slate-500 dark:border-slate-700 dark:bg-muted-dark dark:text-slate-400"> <div class="mx-auto flex max-w-6xl flex-col gap-2 px-6 sm:flex-row sm:items-center sm:justify-between"> <p>&copy; 2025 ComfyUI小白入门 · 保持好奇，持续打磨工作流。</p> <p> <a class="hover:text-primary" href="https://github.com/" rel="noreferrer">贡献与反馈</a> </p> </div> </footer> <script>
+      (() => {
+        const aside = document.querySelector('[data-scroll-spy]');
+        if (!aside) return;
+        const navLinks = Array.from(aside.querySelectorAll('[data-chapter-link]'));
+        if (!navLinks.length) return;
+        const sections = Array.from(document.querySelectorAll('[data-chapter-id]'));
+        if (!sections.length || typeof IntersectionObserver === 'undefined') return;
+
+        const activate = (slug) => {
+          navLinks.forEach((link) => {
+            const active = link.dataset.chapterLink === slug;
+            link.dataset.active = active ? 'true' : 'false';
+            if (active) {
+              link.setAttribute('aria-current', 'page');
+            } else {
+              link.removeAttribute('aria-current');
+            }
+          });
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const slug = entry.target.getAttribute('data-chapter-id');
+                if (slug) {
+                  activate(slug);
+                }
+              }
+            });
+          },
+          { rootMargin: '0px 0px -55% 0px', threshold: [0.1, 0.25] }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+
+        const initialHash = decodeURIComponent(location.hash.replace('#', ''));
+        if (initialHash) {
+          activate(initialHash);
+        } else {
+          const firstVisible = sections.find((section) => section.getBoundingClientRect().top >= 0);
+          if (firstVisible) {
+            const slug = firstVisible.getAttribute('data-chapter-id');
+            if (slug) activate(slug);
+          }
+        }
+
+        window.addEventListener('hashchange', () => {
+          const hashSlug = decodeURIComponent(location.hash.replace('#', ''));
+          if (hashSlug) activate(hashSlug);
+        });
+      })();
+    </script> </body> </html>

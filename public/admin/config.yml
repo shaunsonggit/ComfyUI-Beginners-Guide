@@ -95,3 +95,41 @@ collections:
           - { label: 链接地址, name: url, widget: string }
           - { label: 下载文件？, name: download, widget: boolean, default: false }
       - { name: body, label: 正文内容, widget: markdown }
+  - name: site
+    label: 站点配置
+    files:
+      - label: 资源配置
+        name: resources
+        file: src/content/site/resources.json
+        format: json
+        fields:
+          - label: 资源速达
+            name: quickLinks
+            widget: object
+            fields:
+              - { label: 是否显示, name: enabled, widget: boolean, default: true }
+              - { label: 标题, name: title, widget: string, default: "资源速达" }
+              - label: 链接列表
+                name: items
+                widget: list
+                allow_add: true
+                fields:
+                  - { label: 文案, name: label, widget: string }
+                  - { label: 链接地址, name: url, widget: string }
+                  - { label: 新窗口打开?, name: external, widget: boolean, default: false }
+                  - { label: 图标(可选), name: icon, widget: string, required: false }
+          - label: 配套资源
+            name: downloads
+            widget: object
+            fields:
+              - { label: 是否显示, name: enabled, widget: boolean, default: true }
+              - { label: 标题, name: title, widget: string, default: "配套资源下载" }
+              - { label: 描述(可选), name: description, widget: text, required: false }
+              - label: 下载项
+                name: items
+                widget: list
+                allow_add: true
+                fields:
+                  - { label: 文案, name: label, widget: string }
+                  - { label: 链接地址, name: url, widget: string }
+                  - { label: 下载文件?, name: download, widget: boolean, default: false }

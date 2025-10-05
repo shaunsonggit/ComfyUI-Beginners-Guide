@@ -1,5 +1,5 @@
 ﻿---
-import { getCollection } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import Nav from "../components/Nav.astro";
 import "../styles/global.css";
 import { stripBase, withBase } from "../utils/paths";
@@ -23,6 +23,8 @@ const metaDescription =
 const breadcrumbs = Astro.props.breadcrumbs ?? [];
 const hideSidebar = Astro.props.hideSidebar ?? false;
 const chapters = (await getCollection("tutorial")).sort((a, b) => a.data.order - b.data.order);
+const siteEntry = await getEntry("site", "resources").catch(() => null);
+const quickLinks = siteEntry?.data.quickLinks ?? { enabled: true, title: "资源速达", items: [] };
 const currentPath = stripBase(Astro.url.pathname);
 const normalizedPath = currentPath.replace(/\/$/, "") || "/";
 const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefined;
@@ -71,17 +73,18 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
     <main id="main" class="mx-auto w-full max-w-6xl px-6 py-12">
       <div class={hideSidebar ? "grid gap-10" : "grid gap-10 lg:grid-cols-[240px_minmax(0,1fr)]"}>
         {!hideSidebar && (
-          <aside class="hidden lg:flex lg:flex-col lg:justify-between lg:border-r lg:border-slate-200 lg:pr-8 dark:lg:border-slate-700">
+          <aside
+            class="hidden lg:flex lg:flex-col lg:gap-10 lg:sticky lg:top-28 lg:h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-8 lg:border-r lg:border-slate-200 dark:lg:border-slate-700"
+            data-scroll-spy
+          >
             <div>
               <p class="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">学习目录</p>
               <nav class="mt-4 space-y-1 text-sm">
                 <a
                   href={resolveUrl("/")}
-                  class:list={{
-                    "block rounded-lg px-3 py-2 transition": true,
-                    "bg-primary/10 text-primary": normalizedPath == "/",
-                    "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800": normalizedPath != "/"
-                  }}
+                  class="sidebar-link"
+                  data-chapter-link="__home"
+                  data-active={normalizedPath == "/" ? "true" : "false"}
                   aria-current={normalizedPath == "/" ? "page" : undefined}
                 >
                   站点概览
@@ -93,11 +96,9 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
                   return (
                     <a
                       href={chapterHref}
-                      class:list={{
-                        "block rounded-lg px-3 py-2 transition": true,
-                        "bg-primary/10 text-primary": isActive,
-                        "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800": !isActive
-                      }}
+                      class="sidebar-link"
+                      data-chapter-link={chapter.slug}
+                      data-active={isActive ? "true" : "false"}
                       aria-current={isActive ? "page" : undefined}
                     >
                       {chapter.data.title}
@@ -106,23 +107,29 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
                 })}
               </nav>
             </div>
-            <div class="mt-10 rounded-xl border border-primary/25 bg-primary/5 p-4 text-xs text-slate-600 shadow-sm dark:border-primary/40 dark:bg-primary/10 dark:text-slate-200">
-              <p class="font-semibold text-primary">资源速达</p>
-              <ul class="mt-3 space-y-2">
-                <li>
-                  <a class="flex items-center justify-between rounded-lg px-3 py-2 hover:text-primary" href="#downloads">
-                    下载示例工作流
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="flex items-center justify-between rounded-lg px-3 py-2 hover:text-primary" href="https://github.com/" rel="noreferrer">
-                    GitHub 改进计划
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+            {quickLinks.enabled && quickLinks.items.length > 0 && (
+              <div class="rounded-xl border border-primary/25 bg-primary/5 p-4 text-xs text-slate-600 shadow-sm dark:border-primary/40 dark:bg-primary/10 dark:text-slate-200">
+                <p class="font-semibold text-primary">{quickLinks.title}</p>
+                <ul class="mt-3 space-y-2">
+                  {quickLinks.items.map((item) => {
+                    const href = item.external ? item.url : resolveUrl(item.url);
+                    return (
+                      <li>
+                        <a
+                          class="flex items-center justify-between rounded-lg px-3 py-2 hover:text-primary"
+                          href={href}
+                          rel={item.external ? "noreferrer" : undefined}
+                          target={item.external ? "_blank" : undefined}
+                        >
+                          {item.label}
+                          <span aria-hidden="true">{item.icon ?? (item.external ? "↗" : "→")}</span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </aside>
         )}
         <div class="space-y-8">
@@ -154,6 +161,60 @@ const resolveUrl = (value?: string | null) => withBase(value) ?? value ?? undefi
         </p>
       </div>
     </footer>
+    <script is:inline>
+      (() => {
+        const aside = document.querySelector('[data-scroll-spy]');
+        if (!aside) return;
+        const navLinks = Array.from(aside.querySelectorAll('[data-chapter-link]'));
+        if (!navLinks.length) return;
+        const sections = Array.from(document.querySelectorAll('[data-chapter-id]'));
+        if (!sections.length || typeof IntersectionObserver === 'undefined') return;
+
+        const activate = (slug) => {
+          navLinks.forEach((link) => {
+            const active = link.dataset.chapterLink === slug;
+            link.dataset.active = active ? 'true' : 'false';
+            if (active) {
+              link.setAttribute('aria-current', 'page');
+            } else {
+              link.removeAttribute('aria-current');
+            }
+          });
+        };
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const slug = entry.target.getAttribute('data-chapter-id');
+                if (slug) {
+                  activate(slug);
+                }
+              }
+            });
+          },
+          { rootMargin: '0px 0px -55% 0px', threshold: [0.1, 0.25] }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+
+        const initialHash = decodeURIComponent(location.hash.replace('#', ''));
+        if (initialHash) {
+          activate(initialHash);
+        } else {
+          const firstVisible = sections.find((section) => section.getBoundingClientRect().top >= 0);
+          if (firstVisible) {
+            const slug = firstVisible.getAttribute('data-chapter-id');
+            if (slug) activate(slug);
+          }
+        }
+
+        window.addEventListener('hashchange', () => {
+          const hashSlug = decodeURIComponent(location.hash.replace('#', ''));
+          if (hashSlug) activate(hashSlug);
+        });
+      })();
+    </script>
   </body>
 </html>
 

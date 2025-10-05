@@ -41,3 +41,10 @@ details > summary::-webkit-details-marker {
 .callout {
   @apply rounded-lg border border-primary/40 bg-primary/5 p-4 text-sm dark:border-primary/60 dark:bg-primary/10;
 }
+.sidebar-link {
+  @apply block rounded-lg px-3 py-2 transition text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800;
+}
+
+.sidebar-link[data-active="true"] {
+  @apply bg-primary/10 text-primary;
+}
