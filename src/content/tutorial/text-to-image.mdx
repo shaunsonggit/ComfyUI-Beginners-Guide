@@ -110,18 +110,15 @@ import TipCard from "../../components/mdx/TipCard.astro";
 
 <TipCard title="快速验证任务流" tone="success">
   <ol>
-    <li>点击右上角 <strong>Queue Prompt</strong>，确认控制台无红色报错。</li>
-    <li>在 <code>ComfyUI/output</code> 文件夹找到最新图片，检查是否符合预期提示词。</li>
+    <li>点击右上角 <strong>运行</strong>，确认控制台无红色报错。</li>
+    <li>在 <strong>任务列表</strong> 找到最新图片，检查是否符合预期提示词。</li>
     <li>想重现图像，记录采样器下方的 Seed 值，下次改为固定模式即可复现。</li>
   </ol>
 </TipCard>
 
+![](/ComfyUI-Beginners-Guide/assets/uploads/wechat_2025-10-05_131524_185.png)
+
 ## 阶段三：一套模板，多种玩法
 
-* **替换模型**：只需要在 Checkpoint Loader 中选择新模型，其余节点保持不动。
-* **调整画幅**：修改 Empty Latent Image 的宽高，建议保持 64 的倍数避免报错。
-* **锁定风格**：将 KSampler 的随机模式改为 <code>set_seed</code>，输入固定数值即可复刻。
-
-<TipCard title="立即导入标准模板" tone="info">
-  <p>点击页面底部的「基础文生图工作流 JSON」即可下载本文完成后的流程，拖入 ComfyUI 画布立刻开始改造。</p>
-</TipCard>
+* **调整画幅**：修改 空latent 的宽高，建议保持 64 的倍数避免报错。
+* **锁定风格**：将 K采样器 的随机模式改为 <code>固定</code>，输入固定数值即可复刻。
